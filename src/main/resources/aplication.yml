@@ -1,0 +1,24 @@
+## this is a app configuration
+#logging:
+#  level:
+#    com.example.mbp.mapper: debug
+#
+#spring:
+#  datasource:
+#    driver-class-name: com.p6spy.engine.spy.P6SpyDriver
+#    schema: classpath:db/schema-h2.sql
+#    data: classpath:db/data-h2.sql
+#    url: jdbc:p6spy:h2:mem:test
+#    username: root
+#    password: test
+#    # Abrir la consola en el navegador.
+#  h2:
+#    console:
+#      enabled: true
+#
+#  # No use p6spy
+##driver-class-name: org.h2.Driver
+##schema: classpath:db/schema-h2.sql
+##data: classpath:db/data-h2.sql
+##url: jdbc:h2:mem:test
+##username: root
