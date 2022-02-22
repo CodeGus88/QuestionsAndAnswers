@@ -9,46 +9,33 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("api/user")
 public class UserController {
 
     @Autowired
     UserDao userDao;
 
-    @RequestMapping(value = "api/users", method = RequestMethod.GET)
+    @GetMapping("list")
     public List<User> userList(){
-
         return userDao.getUsers();
     }
 
-    @RequestMapping(value = "api/user/{id}", method = RequestMethod.GET)
+    @GetMapping("search/{id}")
     public User search(@PathVariable long id){
         return userDao.user(id);
     }
 
-
-
-
-    //    public void create(@RequestBody User user){
-    @RequestMapping(value = "api/user/create", method = RequestMethod.POST)
-    public void create(@RequestParam String fulname,
-                       @RequestParam String email, @RequestParam String password){
-        User user = new User();
-        user.setId(-1L);
-        user.setFulName(fulname);
-        user.setEmail(email);
-        user.setPassword(password);
+    @PostMapping("create")
+    public void create(@RequestBody User user){
         userDao.create(user);
     }
 
-    //    public void opdate(@RequestBody User user){
-    @RequestMapping(value = "api/user/update", method = RequestMethod.PUT)
-    public void update(@RequestParam Long id, @RequestParam String fulname,
-                       @RequestParam String email, @RequestParam String password){
-
-        userDao.update(new User(id, fulname, email, password));
+    @PutMapping("update")
+    public void update(@RequestBody User user){
+        userDao.update(user);
     }
 
-    @RequestMapping(value = "api/user/{id}", method = RequestMethod.DELETE)
+    @DeleteMapping("delete/{id}")
     public void delete(@PathVariable long id){
         userDao.delete(id);
     }
