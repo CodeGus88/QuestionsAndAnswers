@@ -1,31 +1,34 @@
 package com.questionsandanswers.questionsandanswers.models;
 
+
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements Serializable {
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "id")
     private long id;
 
+    @Column(name = "fullname")
+    private String fullName;
+
     @Column(name = "email")
     private String email;
-
-    @Column(name = "fulname")
-    private String fulName;
 
     @Column(name = "password")
     private String password;
 
-    public User(){}
+    public User(){
+    }
 
-    public User(long id, String fulName, String email, String password){
+    public User(long id, String fullName, String email, String password) {
         this.id = id;
+        this.fullName = fullName;
         this.email = email;
-        this.fulName = fulName;
         this.password = password;
     }
 
@@ -45,12 +48,12 @@ public class User {
         this.email = email;
     }
 
-    public String getFulName() {
-        return fulName;
+    public String getFullName() {
+        return fullName;
     }
 
-    public void setFulName(String fulName) {
-        this.fulName = fulName;
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public String getPassword() {
@@ -66,7 +69,7 @@ public class User {
         return "User{" +
                 "id=" + id +
                 ", email='" + email + '\'' +
-                ", fulName='" + fulName + '\'' +
+                ", fulName='" + fullName + '\'' +
                 ", password='" + password + '\'' +
                 '}';
     }
