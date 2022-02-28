@@ -3,6 +3,7 @@ package com.questionsandanswers.questionsandanswers.models;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -13,7 +14,7 @@ public class User implements Serializable {
     @Column(name = "id")
     private long id;
 
-    @Column(name = "fullname")
+    @Column(name = "full_name")
     private String fullName;
 
     @Column(name = "email")
@@ -21,6 +22,9 @@ public class User implements Serializable {
 
     @Column(name = "password")
     private String password;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY) // lasy, no trae question cascade = CascadeType.ALL
+    private List<Question> questionList;
 
     public User(){
     }
@@ -64,12 +68,20 @@ public class User implements Serializable {
         this.password = password;
     }
 
+    public List<Question> getQuestionList() {
+        return questionList;
+    }
+
+    public void setQuestionList(List<Question> questionList) {
+        this.questionList = questionList;
+    }
+
     @Override
     public String toString() {
         return "User{" +
                 "id=" + id +
                 ", email='" + email + '\'' +
-                ", fulName='" + fullName + '\'' +
+                ", fullName='" + fullName + '\'' +
                 ", password='" + password + '\'' +
                 '}';
     }

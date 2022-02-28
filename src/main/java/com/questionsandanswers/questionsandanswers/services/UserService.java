@@ -1,6 +1,4 @@
 package com.questionsandanswers.questionsandanswers.services;
-
-import com.questionsandanswers.questionsandanswers.repository.JpaQuestionInterface;
 import com.questionsandanswers.questionsandanswers.services.dto.UserDto;
 import com.questionsandanswers.questionsandanswers.models.User;
 import com.questionsandanswers.questionsandanswers.repository.JpaUserInterface;
@@ -87,7 +85,7 @@ public class UserService {
     }
 
     /**
-     * Elimina un usuario conn id
+     * Elimina un usuario con id
      * @param id
      */
     public void deleteUser(Long id) {

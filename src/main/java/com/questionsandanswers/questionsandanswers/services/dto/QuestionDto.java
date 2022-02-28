@@ -2,7 +2,7 @@ package com.questionsandanswers.questionsandanswers.services.dto;
 
 import com.questionsandanswers.questionsandanswers.models.Question;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 public class QuestionDto {
 
@@ -14,7 +14,7 @@ public class QuestionDto {
 
     private String tags;
 
-    private Date date;
+    private ZonedDateTime createDate;
 
     private UserDto user;
 
@@ -54,12 +54,12 @@ public class QuestionDto {
         this.tags = tags;
     }
 
-    public Date getDate() {
-        return date;
+    public ZonedDateTime getCreateDate() {
+        return createDate;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setCreateDate(ZonedDateTime createDate) {
+        this.createDate = createDate;
     }
 
     public UserDto getUser() {
@@ -75,12 +75,10 @@ public class QuestionDto {
         this.title = question.getTitle();
         this.body = question.getBody();
         this.tags = question.getTags();
-        this.date = question.getDate();
+        this.createDate = question.getCreateDate();
         UserDto userDto =  new UserDto();
         userDto.writeFromModel(question.getUser());
-        this.user.setId(userDto.getId());
-        this.user.setFullName(userDto.getFullName());
-        this.user.setEmail(userDto.getEmail());
+        this.user = userDto;
     }
 
     @Override
@@ -90,7 +88,7 @@ public class QuestionDto {
                 ", title='" + title + '\'' +
                 ", body='" + body + '\'' +
                 ", tags='" + tags + '\'' +
-                ", date=" + date +
+                ", createDate=" + createDate +
                 ", user=" + user +
                 '}';
     }

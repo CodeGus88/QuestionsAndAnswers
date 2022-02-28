@@ -3,10 +3,12 @@ package com.questionsandanswers.questionsandanswers.services;
 import com.questionsandanswers.questionsandanswers.models.Question;
 import com.questionsandanswers.questionsandanswers.repository.JpaQuestionInterface;
 import com.questionsandanswers.questionsandanswers.services.dto.QuestionDto;
+import com.questionsandanswers.questionsandanswers.services.enums.TimeMeasurementsEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -53,8 +55,9 @@ public class QuestionService {
      * @return saveQuestion
      */
     public QuestionDto saveQuestion(Question question){
+        question.setCreateDate(ZonedDateTime.now());
         try{
-            question.setId(0L);
+            question.setId(0L); // Se asegura de que es un nuevo registro
             QuestionDto questionDto = new QuestionDto();
             questionDto.writeFromModel(jpaQuestionInterface.save(question));
             return questionDto;
@@ -72,13 +75,11 @@ public class QuestionService {
     public QuestionDto updateQuestion(Question question){
         try{
             Optional<Question> optional = jpaQuestionInterface.findById(question.getId());
-            if(!optional.isEmpty()){
+            if(!optional.isEmpty()) {
                 QuestionDto questionDto = new QuestionDto();
                 questionDto.writeFromModel(jpaQuestionInterface.save(question));
                 return questionDto;
-            }
-
-            else return null;
+            } else return null;
         }catch (Exception e){
             e.printStackTrace();
             return null;
@@ -106,6 +107,11 @@ public class QuestionService {
         return convertQuestionListToQuestionDtoList(jpaQuestionInterface.findByUserId(userId));
     }
 
+    /**
+     * Convierte la lista Question a QuestionDto
+     * @param questionList
+     * @return  QuestionDtoList
+     */
     private List<QuestionDto> convertQuestionListToQuestionDtoList(List<Question> questionList){
         try{
             List<QuestionDto> questionDtoList = new ArrayList<>();
@@ -121,4 +127,39 @@ public class QuestionService {
         }
     }
 
+    /**
+     * Devuelve la lista de preguntas de un usuario
+     * @param days
+     * @return questionDtoList
+     */
+    @Transactional(readOnly = true)
+    public List<QuestionDto> getQuestionListOnDays(int  days){
+        return convertQuestionListToQuestionDtoList(
+            jpaQuestionInterface.findByCreateDateBetween(ZonedDateTime.now().minusDays(days), ZonedDateTime.now())
+        );
+    }
+
+    /**
+     * Devuelve la lista de preguntas de un usuario
+     * @param rankOfTime
+     * @return questionDtoList
+     */
+    @Transactional(readOnly = true)
+    public List<QuestionDto> getQuestionListOnDays(String rankOfTime){
+        TimeMeasurementsEnum timeMeasurementsEnum = TimeMeasurementsEnum.valueOf(rankOfTime.toUpperCase());
+        return convertQuestionListToQuestionDtoList(
+                jpaQuestionInterface.findByCreateDateBetween(ZonedDateTime.now().minusDays(timeMeasurementsEnum.getDays()),
+                        ZonedDateTime.now())
+        );
+    }
+
+    /**
+     * Buscador de preguntas
+     * @param search
+     * @return questionList
+     */
+    @Transactional(readOnly = true)
+    public List<QuestionDto> getQuestionListSearchMatches(String search){
+        return convertQuestionListToQuestionDtoList(jpaQuestionInterface.searchMatches(search));
+    }
 }

@@ -40,7 +40,23 @@ public class QuestionController {
     }
 
     @GetMapping("user/{userId}")
-    public List<QuestionDto> userQuestionList(@PathVariable Long userId){
+    public List<QuestionDto> userQuestionList(@PathVariable long userId){
         return questionService.userQuestionList(userId);
     }
+
+    @GetMapping("in/{days}")
+    public List<QuestionDto>  userQuestionListInDays(@PathVariable int days){
+        return questionService.getQuestionListOnDays(days);
+    }
+
+    @GetMapping("latest/{rankOfTime}")
+    public List<QuestionDto>  userLatestQuestionList(@PathVariable String rankOfTime){
+        return questionService.getQuestionListOnDays(rankOfTime);
+    }
+    @GetMapping("search/{search}")
+    public List<QuestionDto>  search(@PathVariable String search){
+        System.out.println(search);
+        return questionService.getQuestionListSearchMatches(search);
+    }
+
 }
