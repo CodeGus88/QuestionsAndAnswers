@@ -23,10 +23,14 @@ public class User implements Serializable {
     @Column(name = "password")
     private String password;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY) // lasy, no trae question cascade = CascadeType.ALL
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Question> questionList;
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<Vote> voteList;
+
     public User(){
+
     }
 
     public User(long id, String fullName, String email, String password) {
@@ -74,6 +78,14 @@ public class User implements Serializable {
 
     public void setQuestionList(List<Question> questionList) {
         this.questionList = questionList;
+    }
+
+    public List<Vote> getVoteList() {
+        return voteList;
+    }
+
+    public void setVoteList(List<Vote> voteList) {
+        this.voteList = voteList;
     }
 
     @Override

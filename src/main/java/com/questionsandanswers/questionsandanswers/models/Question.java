@@ -2,6 +2,7 @@ package com.questionsandanswers.questionsandanswers.models;
 
 import javax.persistence.*;
 import java.time.ZonedDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "questions")
@@ -21,12 +22,15 @@ public class Question {
     @Column(name = "tags")
     private String tags;
 
-    @Column(name = "create_date") //, updatable = false
+    @Column(name = "create_date")
     private ZonedDateTime createDate;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false, updatable = false)
     private User user;
+
+    @OneToMany(mappedBy = "question", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    private List<Vote> voteList;
 
     public Question(){
         user = new User();
@@ -80,6 +84,14 @@ public class Question {
         this.user = user;
     }
 
+    public List<Vote> getVoteList() {
+        return voteList;
+    }
+
+    public void setVoteList(List<Vote> voteList) {
+        this.voteList = voteList;
+    }
+
     @Override
     public String toString() {
         return "Question{" +
@@ -89,6 +101,7 @@ public class Question {
                 ", tags='" + tags + '\'' +
                 ", createDate=" + createDate +
                 ", user=" + user +
+                ", voteList=" + voteList +
                 '}';
     }
 }

@@ -18,8 +18,16 @@ public class QuestionDto {
 
     private UserDto user;
 
-    public QuestionDto(){
-        user = new UserDto();
+    private VoteDto vote;
+
+    public QuestionDto(Question question){
+        this.id = question.getId();
+        this.title = question.getTitle();
+        this.body = question.getBody();
+        this.tags = question.getTags();
+        this.createDate = question.getCreateDate();
+        this.user = new UserDto(question.getUser());
+        this.vote = new VoteDto(question.getVoteList());
     }
 
     public Long getId() {
@@ -70,26 +78,12 @@ public class QuestionDto {
         this.user = userDto;
     }
 
-    public void writeFromModel(Question question){
-        this.id = question.getId();
-        this.title = question.getTitle();
-        this.body = question.getBody();
-        this.tags = question.getTags();
-        this.createDate = question.getCreateDate();
-        UserDto userDto =  new UserDto();
-        userDto.writeFromModel(question.getUser());
-        this.user = userDto;
+    public VoteDto getVote() {
+        return vote;
     }
 
-    @Override
-    public String toString() {
-        return "Question{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", body='" + body + '\'' +
-                ", tags='" + tags + '\'' +
-                ", createDate=" + createDate +
-                ", user=" + user +
-                '}';
+    public void setVote(VoteDto vote) {
+        this.vote = vote;
     }
+
 }

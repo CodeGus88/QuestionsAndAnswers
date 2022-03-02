@@ -4,7 +4,10 @@ import com.questionsandanswers.questionsandanswers.models.Question;
 import com.questionsandanswers.questionsandanswers.repository.JpaQuestionInterface;
 import com.questionsandanswers.questionsandanswers.services.dto.QuestionDto;
 import com.questionsandanswers.questionsandanswers.services.enums.TimeMeasurementsEnum;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,8 +30,16 @@ public class QuestionService {
      * @return  questionList
      */
     @Transactional(readOnly = true)
-    public List<QuestionDto> getQuestionList(){
-        return convertQuestionListToQuestionDtoList(jpaQuestionInterface.findAll());
+    public ResponseEntity<List<QuestionDto>> getQuestionList(){
+        ResponseEntity<List<QuestionDto>> responseEntity;
+        try{
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(
+                    convertQuestionListToQuestionDtoList(jpaQuestionInterface.findAll())
+            );
+        }catch (Exception e){
+            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+        return responseEntity;
     }
 
     /**
@@ -37,16 +48,17 @@ public class QuestionService {
      * @return pregunta
      */
     @Transactional(readOnly = true)
-    public QuestionDto getQuestion(Long id){
+    public ResponseEntity<QuestionDto> getQuestion(Long id){
+        ResponseEntity<QuestionDto> responseEntity;
         try{
             Optional<Question> optional = jpaQuestionInterface.findById(id);
-            QuestionDto questionDto = new QuestionDto();
-            questionDto.writeFromModel(optional.get());
-            return questionDto;
+            QuestionDto questionDto = new QuestionDto(optional.get());
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(questionDto);
         }catch (Exception e){
             e.printStackTrace();
-            return null;
+            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
+        return responseEntity;
     }
 
     /**
@@ -54,17 +66,18 @@ public class QuestionService {
      * @param question
      * @return saveQuestion
      */
-    public QuestionDto saveQuestion(Question question){
+    public ResponseEntity<QuestionDto> saveQuestion(Question question){
+        ResponseEntity<QuestionDto> responseEntity;
         question.setCreateDate(ZonedDateTime.now());
         try{
-            question.setId(0L); // Se asegura de que es un nuevo registro
-            QuestionDto questionDto = new QuestionDto();
-            questionDto.writeFromModel(jpaQuestionInterface.save(question));
-            return questionDto;
+            question.setId(0L);
+            QuestionDto questionDto = new QuestionDto(jpaQuestionInterface.save(question));
+            responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(questionDto);
         }catch (Exception e){
             e.printStackTrace();
-            return null;
+            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
+        return responseEntity;
     }
 
     /**
@@ -72,18 +85,19 @@ public class QuestionService {
      * @param question
      * @return updateQuestion
      */
-    public QuestionDto updateQuestion(Question question){
+    public ResponseEntity<QuestionDto> updateQuestion(Question question){
+        ResponseEntity<QuestionDto> responseEntity;
         try{
             Optional<Question> optional = jpaQuestionInterface.findById(question.getId());
             if(!optional.isEmpty()) {
-                QuestionDto questionDto = new QuestionDto();
-                questionDto.writeFromModel(jpaQuestionInterface.save(question));
-                return questionDto;
-            } else return null;
+                QuestionDto questionDto = new QuestionDto(jpaQuestionInterface.save(question));
+                responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(questionDto);
+            } responseEntity = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(null);
         }catch (Exception e){
             e.printStackTrace();
-            return null;
+            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
+        return responseEntity;
     }
 
     /**
@@ -103,8 +117,16 @@ public class QuestionService {
      * @return userQuestionList
      */
     @Transactional(readOnly = true)
-    public List<QuestionDto> userQuestionList(long userId){
-        return convertQuestionListToQuestionDtoList(jpaQuestionInterface.findByUserId(userId));
+    public ResponseEntity<List<QuestionDto>> userQuestionList(long userId){
+        ResponseEntity<List<QuestionDto>> responseEntity;
+        try {
+            List<QuestionDto> questionDtoList =
+                    convertQuestionListToQuestionDtoList(jpaQuestionInterface.findByUserId(userId));
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(questionDtoList);
+        }catch (Exception e){
+            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+        return responseEntity;
     }
 
     /**
@@ -116,8 +138,7 @@ public class QuestionService {
         try{
             List<QuestionDto> questionDtoList = new ArrayList<>();
             for(Question question : questionList){
-                QuestionDto questionDto = new QuestionDto();
-                questionDto.writeFromModel(question);
+                QuestionDto questionDto = new QuestionDto(question);
                 questionDtoList.add(questionDto);
             }
             return questionDtoList;
@@ -133,10 +154,19 @@ public class QuestionService {
      * @return questionDtoList
      */
     @Transactional(readOnly = true)
-    public List<QuestionDto> getQuestionListOnDays(int  days){
-        return convertQuestionListToQuestionDtoList(
-            jpaQuestionInterface.findByCreateDateBetween(ZonedDateTime.now().minusDays(days), ZonedDateTime.now())
-        );
+    public ResponseEntity<List<QuestionDto>> getQuestionListInDays(int  days){
+        ResponseEntity<List<QuestionDto>> responseEntity;
+        try{
+            List<QuestionDto> questionDtoList = convertQuestionListToQuestionDtoList(
+                    jpaQuestionInterface.findByCreateDateBetween(
+                            ZonedDateTime.now().minusDays(days),
+                            ZonedDateTime.now())
+            );
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(questionDtoList);
+        }catch (Exception e){
+            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+        return responseEntity;
     }
 
     /**
@@ -145,12 +175,21 @@ public class QuestionService {
      * @return questionDtoList
      */
     @Transactional(readOnly = true)
-    public List<QuestionDto> getQuestionListOnDays(String rankOfTime){
-        TimeMeasurementsEnum timeMeasurementsEnum = TimeMeasurementsEnum.valueOf(rankOfTime.toUpperCase());
-        return convertQuestionListToQuestionDtoList(
-                jpaQuestionInterface.findByCreateDateBetween(ZonedDateTime.now().minusDays(timeMeasurementsEnum.getDays()),
-                        ZonedDateTime.now())
-        );
+    public ResponseEntity<List<QuestionDto>> getQuestionListInDays(String rankOfTime){
+        ResponseEntity<List<QuestionDto>> responseEntity;
+        try{
+            TimeMeasurementsEnum timeMeasurementsEnum = TimeMeasurementsEnum.valueOf(rankOfTime.toUpperCase());
+            List<QuestionDto> questionDtoList =
+                    convertQuestionListToQuestionDtoList(
+                            jpaQuestionInterface.findByCreateDateBetween(
+                                    ZonedDateTime.now().minusDays(timeMeasurementsEnum.getDays()),
+                                    ZonedDateTime.now())
+                    );
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(questionDtoList);
+        }catch (Exception e){
+            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+        return responseEntity;
     }
 
     /**
@@ -159,7 +198,16 @@ public class QuestionService {
      * @return questionList
      */
     @Transactional(readOnly = true)
-    public List<QuestionDto> getQuestionListSearchMatches(String search){
-        return convertQuestionListToQuestionDtoList(jpaQuestionInterface.searchMatches(search));
+    public ResponseEntity<List<QuestionDto>> getQuestionListSearchMatches(String search){
+        ResponseEntity<List<QuestionDto>> responseEntity;
+
+        try{
+            List<QuestionDto> questionDtoList =
+                    convertQuestionListToQuestionDtoList(jpaQuestionInterface.searchMatches(search));
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(questionDtoList);
+        }catch (Exception e){
+            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+        return responseEntity;
     }
 }

@@ -11,6 +11,12 @@ public class UserDto {
     private String fullName;
     private String email;
 
+    public UserDto(User user) {
+        this.id = user.getId();
+        this.fullName = user.getFullName();
+        this.email = user.getEmail();
+    }
+
     public long getId() {
         return id;
     }
@@ -35,14 +41,14 @@ public class UserDto {
         this.fullName = fullName;
     }
 
-    /**
-     * Convierte un modelo User al DTO
-     * @param user
-     */
-    public void writeFromModel(User user){
-        this.id = user.getId();
-        this.fullName = user.getFullName();
-        this.email = user.getEmail();
-    }
+//    /**
+//     * Convierte un modelo User al DTO
+//     * @param user
+//     */
+//    public void writeFromModel(User user){
+//        this.id = user.getId();
+//        this.fullName = user.getFullName();
+//        this.email = user.getEmail();
+//    }
 
 }

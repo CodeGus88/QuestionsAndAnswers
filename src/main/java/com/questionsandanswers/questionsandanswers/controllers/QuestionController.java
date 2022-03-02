@@ -4,6 +4,7 @@ import com.questionsandanswers.questionsandanswers.models.Question;
 import com.questionsandanswers.questionsandanswers.services.QuestionService;
 import com.questionsandanswers.questionsandanswers.services.dto.QuestionDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -15,22 +16,22 @@ public class QuestionController {
     QuestionService questionService;
 
     @GetMapping
-    public List<QuestionDto> questionList(){
+    public ResponseEntity<List<QuestionDto>> questionList(){
         return questionService.getQuestionList();
     }
 
     @GetMapping("{id}")
-    public QuestionDto findQuestionById(@PathVariable long id){
+    public ResponseEntity<QuestionDto> findQuestionById(@PathVariable long id){
         return questionService.getQuestion(id);
     }
 
     @PostMapping("create")
-    public QuestionDto create(@RequestBody Question question){ // llega en forma de las columnas de la tabla
+    public ResponseEntity<QuestionDto> create(@RequestBody Question question){ // llega en forma de las columnas de la tabla
         return questionService.saveQuestion(question);
     }
 
     @PutMapping("update")
-    public QuestionDto update(@RequestBody Question question){
+    public ResponseEntity<QuestionDto> update(@RequestBody Question question){
         return questionService.updateQuestion(question);
     }
 
@@ -40,22 +41,21 @@ public class QuestionController {
     }
 
     @GetMapping("user/{userId}")
-    public List<QuestionDto> userQuestionList(@PathVariable long userId){
+    public ResponseEntity<List<QuestionDto>> userQuestionList(@PathVariable long userId){
         return questionService.userQuestionList(userId);
     }
 
     @GetMapping("in/{days}")
-    public List<QuestionDto>  userQuestionListInDays(@PathVariable int days){
-        return questionService.getQuestionListOnDays(days);
+    public ResponseEntity<List<QuestionDto>>  userQuestionListInDays(@PathVariable int days){
+        return questionService.getQuestionListInDays(days);
     }
 
     @GetMapping("latest/{rankOfTime}")
-    public List<QuestionDto>  userLatestQuestionList(@PathVariable String rankOfTime){
-        return questionService.getQuestionListOnDays(rankOfTime);
+    public ResponseEntity<List<QuestionDto>> userLatestQuestionList(@PathVariable String rankOfTime){
+        return questionService.getQuestionListInDays(rankOfTime);
     }
     @GetMapping("search/{search}")
-    public List<QuestionDto>  search(@PathVariable String search){
-        System.out.println(search);
+    public ResponseEntity<List<QuestionDto>>  search(@PathVariable String search){
         return questionService.getQuestionListSearchMatches(search);
     }
 
