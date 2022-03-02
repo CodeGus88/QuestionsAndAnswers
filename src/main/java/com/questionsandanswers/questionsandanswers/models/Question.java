@@ -1,7 +1,8 @@
 package com.questionsandanswers.questionsandanswers.models;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.ZonedDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "questions")
@@ -21,12 +22,15 @@ public class Question {
     @Column(name = "tags")
     private String tags;
 
-    @Column(name = "date")
-    private Date date;
+    @Column(name = "create_date")
+    private ZonedDateTime createDate;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false, updatable = false)
     private User user;
+
+    @OneToMany(mappedBy = "question", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    private List<Vote> voteList;
 
     public Question(){
         user = new User();
@@ -64,12 +68,12 @@ public class Question {
         this.tags = tags;
     }
 
-    public Date getDate() {
-        return date;
+    public ZonedDateTime getCreateDate() {
+        return createDate;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setCreateDate(ZonedDateTime createDate) {
+        this.createDate = createDate;
     }
 
     public User getUser() {
@@ -80,6 +84,14 @@ public class Question {
         this.user = user;
     }
 
+    public List<Vote> getVoteList() {
+        return voteList;
+    }
+
+    public void setVoteList(List<Vote> voteList) {
+        this.voteList = voteList;
+    }
+
     @Override
     public String toString() {
         return "Question{" +
@@ -87,8 +99,9 @@ public class Question {
                 ", title='" + title + '\'' +
                 ", body='" + body + '\'' +
                 ", tags='" + tags + '\'' +
-                ", date=" + date +
+                ", createDate=" + createDate +
                 ", user=" + user +
+                ", voteList=" + voteList +
                 '}';
     }
 }

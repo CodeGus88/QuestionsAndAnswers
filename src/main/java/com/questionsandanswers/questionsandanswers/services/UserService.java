@@ -1,10 +1,10 @@
 package com.questionsandanswers.questionsandanswers.services;
-
-import com.questionsandanswers.questionsandanswers.repository.JpaQuestionInterface;
 import com.questionsandanswers.questionsandanswers.services.dto.UserDto;
 import com.questionsandanswers.questionsandanswers.models.User;
 import com.questionsandanswers.questionsandanswers.repository.JpaUserInterface;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,17 +20,22 @@ public class UserService {
      * Retorna la lista de usuarios
      * @return userList
      */
-    public List<UserDto> getUserList() {
-        List<User> userList = jpaUserInterface.findAll();
-        List<UserDto> userDtoList = new ArrayList<>();
-        if(userList!=null){
-            for(User user : userList){
-                UserDto userDto = new UserDto();
-                userDto.writeFromModel(user);
-                userDtoList.add(userDto);
+    public ResponseEntity<List<UserDto>> getUserList() {
+        ResponseEntity<List<UserDto>> responseEntity;
+        try{
+            List<User> userList = jpaUserInterface.findAll();
+            List<UserDto> userDtoList = new ArrayList<>();
+            if(userList!=null){
+                for(User user : userList){
+                    UserDto userDto = new UserDto(user);
+                    userDtoList.add(userDto);
+                }
             }
-            return userDtoList;
-        } return null;
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(userDtoList);
+        }catch (Exception e){
+            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+         return responseEntity;
     }
 
     /**
@@ -38,16 +43,17 @@ public class UserService {
      * @param id
      * @return userDto
      */
-    public UserDto getUser(Long id) {
+    public ResponseEntity<UserDto> getUser(Long id) {
+        ResponseEntity<UserDto> responseEntity;
         try{
             Optional<User> optional = jpaUserInterface.findById(id);
-            UserDto userDto = new UserDto();
-            userDto.writeFromModel(optional.get());
-            return userDto;
+            UserDto userDto = new UserDto(optional.get());
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(userDto);
         }catch (Exception e){
             e.printStackTrace();
-            return null;
+            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
+        return responseEntity;
     }
 
     /**
@@ -55,39 +61,41 @@ public class UserService {
      * @param user
      * return userDto
      */
-    public UserDto saveUser(User user) {
+    public ResponseEntity<UserDto> saveUser(User user) {
+        ResponseEntity<UserDto> responseEntity;
         try{
             user.setId(0L);
-            UserDto userDto = new UserDto();
-            userDto.writeFromModel(jpaUserInterface.save(user));
-            return userDto;
+            UserDto userDto = new UserDto(jpaUserInterface.save(user));
+            responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(userDto);
         }catch (Exception e){
             e.printStackTrace();
-            return null;
+            responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(null);
         }
+        return responseEntity;
     }
 
     /**
      * Actualiza un usuario
      * @param user
      */
-    public UserDto updateUser(User user) {
+    public ResponseEntity<UserDto> updateUser(User user) {
+        ResponseEntity<UserDto> responseEntity;
         try{
             Optional<User> optional = jpaUserInterface.findById(user.getId());
             if(!optional.isEmpty()){
-                UserDto userDto = new UserDto();
-                userDto.writeFromModel(jpaUserInterface.save(user));
-                return userDto;
+                UserDto userDto = new UserDto(jpaUserInterface.save(user));
+                responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(userDto);
             }else
-                return null;
+                responseEntity = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(null);
         }catch (Exception e){
             e.printStackTrace();
-            return null;
+            responseEntity = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(null);
         }
+        return responseEntity;
     }
 
     /**
-     * Elimina un usuario conn id
+     * Elimina un usuario con id
      * @param id
      */
     public void deleteUser(Long id) {

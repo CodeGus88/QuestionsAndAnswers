@@ -4,8 +4,7 @@ public enum UserEnum {
         USER,
         ID,
         NAME,
-        FULNAME,
+        FULLNAME,
         EMAIL,
         PASSWORD;
-
 }

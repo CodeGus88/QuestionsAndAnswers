@@ -2,7 +2,7 @@ package com.questionsandanswers.questionsandanswers.services.dto;
 
 import com.questionsandanswers.questionsandanswers.models.Question;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 public class QuestionDto {
 
@@ -14,12 +14,20 @@ public class QuestionDto {
 
     private String tags;
 
-    private Date date;
+    private ZonedDateTime createDate;
 
     private UserDto user;
 
-    public QuestionDto(){
-        user = new UserDto();
+    private VoteDto vote;
+
+    public QuestionDto(Question question){
+        this.id = question.getId();
+        this.title = question.getTitle();
+        this.body = question.getBody();
+        this.tags = question.getTags();
+        this.createDate = question.getCreateDate();
+        this.user = new UserDto(question.getUser());
+        this.vote = new VoteDto(question.getVoteList());
     }
 
     public Long getId() {
@@ -54,12 +62,12 @@ public class QuestionDto {
         this.tags = tags;
     }
 
-    public Date getDate() {
-        return date;
+    public ZonedDateTime getCreateDate() {
+        return createDate;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setCreateDate(ZonedDateTime createDate) {
+        this.createDate = createDate;
     }
 
     public UserDto getUser() {
@@ -70,28 +78,12 @@ public class QuestionDto {
         this.user = userDto;
     }
 
-    public void writeFromModel(Question question){
-        this.id = question.getId();
-        this.title = question.getTitle();
-        this.body = question.getBody();
-        this.tags = question.getTags();
-        this.date = question.getDate();
-        UserDto userDto =  new UserDto();
-        userDto.writeFromModel(question.getUser());
-        this.user.setId(userDto.getId());
-        this.user.setFullName(userDto.getFullName());
-        this.user.setEmail(userDto.getEmail());
+    public VoteDto getVote() {
+        return vote;
     }
 
-    @Override
-    public String toString() {
-        return "Question{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", body='" + body + '\'' +
-                ", tags='" + tags + '\'' +
-                ", date=" + date +
-                ", user=" + user +
-                '}';
+    public void setVote(VoteDto vote) {
+        this.vote = vote;
     }
+
 }
