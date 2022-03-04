@@ -5,9 +5,6 @@ import com.questionsandanswers.questionsandanswers.models.Vote;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * La clase devuelve la cantidad de votos de la pregunta.
- */
 public class VoteDto {
     private int resulOfTheVotes;
     private long questionId;

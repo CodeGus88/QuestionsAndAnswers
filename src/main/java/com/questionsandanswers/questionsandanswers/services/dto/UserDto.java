@@ -2,9 +2,6 @@ package com.questionsandanswers.questionsandanswers.services.dto;
 
 import com.questionsandanswers.questionsandanswers.models.User;
 
-/**
- * La representación del modelo usuario en DTO
- */
 public class UserDto {
 
     private long id;

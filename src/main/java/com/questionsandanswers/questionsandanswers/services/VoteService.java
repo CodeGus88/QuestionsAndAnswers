@@ -2,13 +2,14 @@ package com.questionsandanswers.questionsandanswers.services;
 
 import com.questionsandanswers.questionsandanswers.models.Vote;
 import com.questionsandanswers.questionsandanswers.repository.JpaVoteInterface;
+import com.questionsandanswers.questionsandanswers.exceptions.Validation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 /**
- * Servicio, peticiones al servidor
+ * Servicio de Vote, peticiones al servidor
  */
 @Service
 public class VoteService {
@@ -45,6 +46,7 @@ public class VoteService {
     public ResponseEntity<Boolean> removeVote(long id){
         ResponseEntity<Boolean> responseEntity;
         try {
+            Validation.notFound(id, jpaVoteInterface.findById(id).isEmpty());
             jpaVoteInterface.deleteById(id);
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(true);
         }catch (Exception e){
@@ -69,5 +71,4 @@ public class VoteService {
         }
         return responseEntity;
     }
-
 }

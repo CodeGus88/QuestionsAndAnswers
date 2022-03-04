@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Controlador para la entidad User (usuarios)
+ */
 @RestController
 @RequestMapping("api/users")
 public class UserController {
@@ -22,7 +25,7 @@ public class UserController {
         return userService.getUserList();
     }
 
-    @GetMapping("search/{id}")
+    @GetMapping("{id}")
     public ResponseEntity<UserDto> search(@PathVariable long id){
         return userService.getUser(id);
     }

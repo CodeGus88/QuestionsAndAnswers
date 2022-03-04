@@ -8,6 +8,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
+/**
+ * Controlador para la entidad Question (preguntas)
+ */
 @RestController
 @RequestMapping("api/questions")
 public class QuestionController {
@@ -26,7 +29,7 @@ public class QuestionController {
     }
 
     @PostMapping("create")
-    public ResponseEntity<QuestionDto> create(@RequestBody Question question){ // llega en forma de las columnas de la tabla
+    public ResponseEntity<QuestionDto> create(@RequestBody Question question){
         return questionService.saveQuestion(question);
     }
 
