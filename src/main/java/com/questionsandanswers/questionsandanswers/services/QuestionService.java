@@ -1,10 +1,13 @@
 package com.questionsandanswers.questionsandanswers.services;
 
+import com.questionsandanswers.questionsandanswers.exceptions.AdviceController;
 import com.questionsandanswers.questionsandanswers.models.Question;
 import com.questionsandanswers.questionsandanswers.repository.JpaQuestionInterface;
 import com.questionsandanswers.questionsandanswers.services.dto.QuestionDto;
 import com.questionsandanswers.questionsandanswers.services.enums.TimeMeasurementsEnum;
-import org.apache.coyote.Response;
+import com.questionsandanswers.questionsandanswers.exceptions.Validation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +28,8 @@ public class QuestionService {
     @Autowired
     private JpaQuestionInterface jpaQuestionInterface;
 
+    private Logger logger = LoggerFactory.getLogger(AdviceController.class);
+
     /**
      * Listar todas las preguntas
      * @return  questionList
@@ -37,6 +42,7 @@ public class QuestionService {
                     convertQuestionListToQuestionDtoList(jpaQuestionInterface.findAll())
             );
         }catch (Exception e){
+            logger.error(e.getMessage());
             responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
         return responseEntity;
@@ -49,15 +55,11 @@ public class QuestionService {
      */
     @Transactional(readOnly = true)
     public ResponseEntity<QuestionDto> getQuestion(Long id){
+        Optional<Question> optional = jpaQuestionInterface.findById(id);
+        Validation.notFound(id, optional.isEmpty());
+        QuestionDto questionDto = new QuestionDto(optional.get());
         ResponseEntity<QuestionDto> responseEntity;
-        try{
-            Optional<Question> optional = jpaQuestionInterface.findById(id);
-            QuestionDto questionDto = new QuestionDto(optional.get());
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(questionDto);
-        }catch (Exception e){
-            e.printStackTrace();
-            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
+        responseEntity = ResponseEntity.status(HttpStatus.OK).body(questionDto);
         return responseEntity;
     }
 
@@ -67,6 +69,7 @@ public class QuestionService {
      * @return saveQuestion
      */
     public ResponseEntity<QuestionDto> saveQuestion(Question question){
+        Validation.validateWhriteQuestionData(question);
         ResponseEntity<QuestionDto> responseEntity;
         question.setCreateDate(ZonedDateTime.now());
         try{
@@ -74,7 +77,7 @@ public class QuestionService {
             QuestionDto questionDto = new QuestionDto(jpaQuestionInterface.save(question));
             responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(questionDto);
         }catch (Exception e){
-            e.printStackTrace();
+            logger.error(e.getMessage());
             responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
         return responseEntity;
@@ -86,15 +89,14 @@ public class QuestionService {
      * @return updateQuestion
      */
     public ResponseEntity<QuestionDto> updateQuestion(Question question){
+        Validation.notFound(question.getId(), jpaQuestionInterface.findById(question.getId()).isEmpty());
+        Validation.validateWhriteQuestionData(question);
         ResponseEntity<QuestionDto> responseEntity;
         try{
-            Optional<Question> optional = jpaQuestionInterface.findById(question.getId());
-            if(!optional.isEmpty()) {
-                QuestionDto questionDto = new QuestionDto(jpaQuestionInterface.save(question));
-                responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(questionDto);
-            } responseEntity = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(null);
+            QuestionDto questionDto = new QuestionDto(jpaQuestionInterface.save(question));
+            responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(questionDto);
         }catch (Exception e){
-            e.printStackTrace();
+            logger.error(e.getMessage());
             responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
         return responseEntity;
@@ -105,11 +107,9 @@ public class QuestionService {
      * @param id
      */
     public void deleteQuestion(Long id){
+        Validation.notFound(id, jpaQuestionInterface.findById(id).isEmpty());
         jpaQuestionInterface.deleteById(id);
     }
-
-
-//    SERVICIOS ADICIONALES AL CRUD
 
     /**
      * Devuelve la lista de preguntas de un usuario
@@ -124,6 +124,7 @@ public class QuestionService {
                     convertQuestionListToQuestionDtoList(jpaQuestionInterface.findByUserId(userId));
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(questionDtoList);
         }catch (Exception e){
+            logger.error(e.getMessage());
             responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
         return responseEntity;
@@ -143,7 +144,7 @@ public class QuestionService {
             }
             return questionDtoList;
         }catch (Exception e){
-            e.printStackTrace();
+            logger.error(e.getMessage());
             return null;
         }
     }
@@ -164,6 +165,7 @@ public class QuestionService {
             );
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(questionDtoList);
         }catch (Exception e){
+            logger.error(e.getMessage());
             responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
         return responseEntity;
@@ -187,6 +189,7 @@ public class QuestionService {
                     );
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(questionDtoList);
         }catch (Exception e){
+            logger.error(e.getMessage());
             responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
         return responseEntity;
@@ -200,12 +203,12 @@ public class QuestionService {
     @Transactional(readOnly = true)
     public ResponseEntity<List<QuestionDto>> getQuestionListSearchMatches(String search){
         ResponseEntity<List<QuestionDto>> responseEntity;
-
         try{
             List<QuestionDto> questionDtoList =
                     convertQuestionListToQuestionDtoList(jpaQuestionInterface.searchMatches(search));
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(questionDtoList);
         }catch (Exception e){
+            logger.error(e.getMessage());
             responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
         return responseEntity;

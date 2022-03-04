@@ -22,7 +22,7 @@ public class UserController {
         return userService.getUserList();
     }
 
-    @GetMapping("search/{id}")
+    @GetMapping("{id}")
     public ResponseEntity<UserDto> search(@PathVariable long id){
         return userService.getUser(id);
     }

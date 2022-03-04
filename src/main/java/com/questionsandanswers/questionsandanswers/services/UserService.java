@@ -1,7 +1,11 @@
 package com.questionsandanswers.questionsandanswers.services;
+import com.questionsandanswers.questionsandanswers.exceptions.AdviceController;
 import com.questionsandanswers.questionsandanswers.services.dto.UserDto;
 import com.questionsandanswers.questionsandanswers.models.User;
 import com.questionsandanswers.questionsandanswers.repository.JpaUserInterface;
+import com.questionsandanswers.questionsandanswers.exceptions.Validation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +19,8 @@ public class UserService {
 
     @Autowired
     private JpaUserInterface jpaUserInterface;
+
+    private Logger logger = LoggerFactory.getLogger(AdviceController.class);
 
     /**
      * Retorna la lista de usuarios
@@ -33,6 +39,7 @@ public class UserService {
             }
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(userDtoList);
         }catch (Exception e){
+            logger.error(e.getMessage());
             responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
          return responseEntity;
@@ -45,14 +52,10 @@ public class UserService {
      */
     public ResponseEntity<UserDto> getUser(Long id) {
         ResponseEntity<UserDto> responseEntity;
-        try{
-            Optional<User> optional = jpaUserInterface.findById(id);
-            UserDto userDto = new UserDto(optional.get());
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(userDto);
-        }catch (Exception e){
-            e.printStackTrace();
-            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
+        Optional<User> optional = jpaUserInterface.findById(id);
+        Validation.notFound(id, optional.isEmpty());
+        UserDto userDto = new UserDto(optional.get());
+        responseEntity = ResponseEntity.status(HttpStatus.OK).body(userDto);
         return responseEntity;
     }
 
@@ -63,13 +66,14 @@ public class UserService {
      */
     public ResponseEntity<UserDto> saveUser(User user) {
         ResponseEntity<UserDto> responseEntity;
+        user.setId(0L);
+        Validation.validateWhriteUserData(user, jpaUserInterface.findByEmail(user.getEmail()), true);
         try{
-            user.setId(0L);
             UserDto userDto = new UserDto(jpaUserInterface.save(user));
             responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(userDto);
         }catch (Exception e){
-            e.printStackTrace();
-            responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(null);
+            logger.error(e.getMessage());
+            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
         return responseEntity;
     }
@@ -80,15 +84,13 @@ public class UserService {
      */
     public ResponseEntity<UserDto> updateUser(User user) {
         ResponseEntity<UserDto> responseEntity;
+        Validation.notFound(user.getId(), jpaUserInterface.findById(user.getId()).isEmpty());
+        Validation.validateWhriteUserData(user, jpaUserInterface.findByEmail(user.getEmail()), false);
         try{
-            Optional<User> optional = jpaUserInterface.findById(user.getId());
-            if(!optional.isEmpty()){
-                UserDto userDto = new UserDto(jpaUserInterface.save(user));
-                responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(userDto);
-            }else
-                responseEntity = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(null);
+            UserDto userDto = new UserDto(jpaUserInterface.save(user));
+            responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(userDto);
         }catch (Exception e){
-            e.printStackTrace();
+            logger.error(e.getMessage());
             responseEntity = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(null);
         }
         return responseEntity;
@@ -99,6 +101,7 @@ public class UserService {
      * @param id
      */
     public void deleteUser(Long id) {
+        Validation.notFound(id, jpaUserInterface.findById(id).isEmpty());
         jpaUserInterface.deleteById(id);
     }
 }
