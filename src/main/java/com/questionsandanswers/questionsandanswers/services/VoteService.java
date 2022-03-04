@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 /**
- * Servicio, peticiones al servidor
+ * Servicio de Vote, peticiones al servidor
  */
 @Service
 public class VoteService {

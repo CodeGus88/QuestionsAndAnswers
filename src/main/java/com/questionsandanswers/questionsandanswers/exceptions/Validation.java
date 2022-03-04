@@ -5,8 +5,11 @@ import com.questionsandanswers.questionsandanswers.models.User;
 import org.springframework.http.HttpStatus;
 
 import java.util.List;
-import java.util.Optional;
 
+/**
+ * Esta clase valida la información que se obtiene del cliente
+ * hace que se proceda o lanza una excepción
+ */
 public class Validation {
 
     public static void notFound(long id, boolean isEmpty){
@@ -15,8 +18,14 @@ public class Validation {
         }
     }
 
+    /**
+     * Evalua los datos de entrada para editar y crear usuario
+     * @param user
+     * @param emailWithMatches
+     * @param IS_NEW_USER
+     */
     public static void validateWhriteUserData(User user, List<User> emailWithMatches, final boolean IS_NEW_USER){
-        ErrorEntity error = new ErrorEntity();
+        ErrorModel error = new ErrorModel();
         if(user.getFullName().isEmpty())
             error.putError("Fullname is required");
 
@@ -38,8 +47,12 @@ public class Validation {
             throw new ValidationException("ERROR IN THE FORM", error, HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * Evalua los datos de entrada para editar y crear pregunta
+     * @param question
+     */
     public static void validateWhriteQuestionData(Question question){
-        ErrorEntity error = new ErrorEntity();
+        ErrorModel error = new ErrorModel();
         if(question.getTitle().isEmpty())
             error.putError("Title is required");
 

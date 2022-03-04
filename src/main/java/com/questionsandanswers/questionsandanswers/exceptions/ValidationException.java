@@ -2,22 +2,25 @@ package com.questionsandanswers.questionsandanswers.exceptions;
 
 import org.springframework.http.HttpStatus;
 
+/**
+ * Excepción personalizada, además del message, se adjunta el objeto Error y el status
+ */
 public class ValidationException extends RuntimeException{
 
-    private ErrorEntity error;
+    private ErrorModel error;
     private HttpStatus status;
 
-    public ValidationException(String message, ErrorEntity error, HttpStatus status) {
+    public ValidationException(String message, ErrorModel error, HttpStatus status) {
         super(message);
         this.error = error;
         this.status = status;
     }
 
-    public ErrorEntity getError() {
+    public ErrorModel getError() {
         return error;
     }
 
-    public void setError(ErrorEntity error) {
+    public void setError(ErrorModel error) {
         this.error = error;
     }
 

@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Controlador para la entidad User (usuarios)
+ */
 @RestController
 @RequestMapping("api/users")
 public class UserController {

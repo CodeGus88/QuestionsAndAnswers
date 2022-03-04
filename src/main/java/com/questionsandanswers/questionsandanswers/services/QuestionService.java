@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Servicio, peticiones al servidor
+ * Servicio de Question, peticiones al servidor
  */
 @Service
 public class QuestionService {
@@ -184,8 +184,8 @@ public class QuestionService {
             List<QuestionDto> questionDtoList =
                     convertQuestionListToQuestionDtoList(
                             jpaQuestionInterface.findByCreateDateBetween(
-                                    ZonedDateTime.now().minusDays(timeMeasurementsEnum.getDays()),
-                                    ZonedDateTime.now())
+                                ZonedDateTime.now().minusDays(timeMeasurementsEnum.getDays()),
+                                ZonedDateTime.now())
                     );
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(questionDtoList);
         }catch (Exception e){

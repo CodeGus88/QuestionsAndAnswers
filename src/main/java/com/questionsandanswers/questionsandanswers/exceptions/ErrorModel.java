@@ -3,12 +3,15 @@ package com.questionsandanswers.questionsandanswers.exceptions;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ErrorEntity {
+/**
+ * Modelo Error, adjunta una lista de errores
+ */
+public class ErrorModel {
 
     private String message;
     private List<String> errors;
 
-    public ErrorEntity(){
+    public ErrorModel(){
         errors = new ArrayList<>();
     }
 
@@ -23,7 +26,6 @@ public class ErrorEntity {
     public List<String> getErrors() {
         return errors;
     }
-
     public void setErrors(List<String> errors) {
         this.errors = errors;
     }

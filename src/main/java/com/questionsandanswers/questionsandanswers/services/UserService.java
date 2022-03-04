@@ -14,6 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Servicio de User, peticiones al servidor
+ */
 @Service
 public class UserService {
 

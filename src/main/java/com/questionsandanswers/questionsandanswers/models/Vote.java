@@ -2,6 +2,9 @@ package com.questionsandanswers.questionsandanswers.models;
 
 import javax.persistence.*;
 
+/**
+ * Modelo o entidad Vote (Voto)
+ */
 @Entity
 @Table(name = "votes")
 public class Vote {
