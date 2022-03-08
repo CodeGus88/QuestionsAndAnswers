@@ -27,8 +27,8 @@ public interface JpaQuestionInterface extends JpaRepository<Question, Long> {
      * @return questionList
      */
     @Query(value = "SELECT * " +
-            "FROM questions q " +
-            "WHERE q.create_date BETWEEN ?1 and ?2", nativeQuery = true)
+            "FROM questions " +
+            "WHERE create_date BETWEEN ?1 and ?2", nativeQuery = true)
     public List<Question> findByCreateDateBetween(ZonedDateTime start, ZonedDateTime end);
 
     /**
@@ -37,11 +37,11 @@ public interface JpaQuestionInterface extends JpaRepository<Question, Long> {
      * @return questionList
      */
     @Query(value = "SELECT * " +
-            "FROM questions q " +
+            "FROM questions " +
             "WHERE " +
-            "q.title LIKE %?1% OR " +
-            "q.body LIKE %?1% OR " +
-            "q.tags LIKE %?1% ", nativeQuery = true)
+            "title LIKE %?1% OR " +
+            "body LIKE %?1% OR " +
+            "tags LIKE %?1% ", nativeQuery = true)
     public List<Question> searchMatches(String search);
 
 }

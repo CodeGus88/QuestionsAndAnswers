@@ -2,7 +2,9 @@ package com.questionsandanswers.questionsandanswers.services.dto;
 
 import com.questionsandanswers.questionsandanswers.models.User;
 
-public class UserDto {
+import java.io.Serializable;
+
+public class UserDto implements Serializable {
 
     private long id;
     private String fullName;
@@ -37,15 +39,5 @@ public class UserDto {
     public void setFullName(String fullName) {
         this.fullName = fullName;
     }
-
-//    /**
-//     * Convierte un modelo User al DTO
-//     * @param user
-//     */
-//    public void writeFromModel(User user){
-//        this.id = user.getId();
-//        this.fullName = user.getFullName();
-//        this.email = user.getEmail();
-//    }
 
 }

@@ -4,13 +4,13 @@ import com.questionsandanswers.questionsandanswers.services.dto.UserDto;
 import com.questionsandanswers.questionsandanswers.models.User;
 import com.questionsandanswers.questionsandanswers.repository.JpaUserInterface;
 import com.questionsandanswers.questionsandanswers.exceptions.Validation;
+import com.questionsandanswers.questionsandanswers.services.tools.ListConvert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,21 +30,9 @@ public class UserService {
      * @return userList
      */
     public ResponseEntity<List<UserDto>> getUserList() {
-        ResponseEntity<List<UserDto>> responseEntity;
-        try{
-            List<User> userList = jpaUserInterface.findAll();
-            List<UserDto> userDtoList = new ArrayList<>();
-            if(userList!=null){
-                for(User user : userList){
-                    UserDto userDto = new UserDto(user);
-                    userDtoList.add(userDto);
-                }
-            }
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(userDtoList);
-        }catch (Exception e){
-            logger.error(e.getMessage());
-            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
+        ResponseEntity<List<UserDto>> responseEntity = ResponseEntity.status(HttpStatus.OK).body(
+                ListConvert.userToUserDto(jpaUserInterface.findAll())
+        );
          return responseEntity;
     }
 

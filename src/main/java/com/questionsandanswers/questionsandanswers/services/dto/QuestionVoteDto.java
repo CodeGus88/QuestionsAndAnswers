@@ -1,22 +1,23 @@
 package com.questionsandanswers.questionsandanswers.services.dto;
 
-import com.questionsandanswers.questionsandanswers.models.Vote;
+import com.questionsandanswers.questionsandanswers.models.QuestionVote;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VoteDto {
+public class QuestionVoteDto implements Serializable {
     private int resulOfTheVotes;
     private long questionId;
     private List<VoteResume> voteResumeList;
 
-    public VoteDto(List<Vote> voteList){
+    public QuestionVoteDto(List<QuestionVote> questionVoteList){
         voteResumeList = new ArrayList<>();
-        if(voteList != null){
-            this.resulOfTheVotes = voteList.size();
-            questionId = voteList.size()>0? voteList.get(0).getQuestion().getId(): 0;
-            for(Vote vote : voteList){
-                voteResumeList.add(new VoteResume(vote.getId(), vote.getUser().getId()));
+        if(questionVoteList != null){
+            this.resulOfTheVotes = questionVoteList.size();
+            questionId = questionVoteList.size()>0? questionVoteList.get(0).getQuestion().getId(): 0;
+            for(QuestionVote questionVote : questionVoteList){
+                voteResumeList.add(new VoteResume(questionVote.getId(), questionVote.getUser().getId()));
             }
         }else{
             resulOfTheVotes = 0;

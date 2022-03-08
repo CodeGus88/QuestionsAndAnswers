@@ -1,13 +1,14 @@
 package com.questionsandanswers.questionsandanswers.models;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * Modelo o entidad Vote (Voto)
  */
 @Entity
-@Table(name = "votes")
-public class Vote {
+@Table(name = "question_votes")
+public class QuestionVote implements Serializable {
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -21,7 +22,6 @@ public class Vote {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id", referencedColumnName = "id", nullable = false, updatable = false)
     private Question question;
-
 
     public Long getId() {
         return id;
@@ -49,7 +49,7 @@ public class Vote {
 
     @Override
     public String toString() {
-        return "Vote{" +
+        return "QuestionVote{" +
                 "id=" + id +
                 ", user=" + user +
                 ", question=" + question +

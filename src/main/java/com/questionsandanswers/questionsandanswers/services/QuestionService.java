@@ -6,6 +6,7 @@ import com.questionsandanswers.questionsandanswers.repository.JpaQuestionInterfa
 import com.questionsandanswers.questionsandanswers.services.dto.QuestionDto;
 import com.questionsandanswers.questionsandanswers.services.enums.TimeMeasurementsEnum;
 import com.questionsandanswers.questionsandanswers.exceptions.Validation;
+import com.questionsandanswers.questionsandanswers.services.tools.ListConvert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,7 +39,7 @@ public class QuestionService {
         ResponseEntity<List<QuestionDto>> responseEntity;
         try{
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(
-                    convertQuestionListToQuestionDtoList(jpaQuestionInterface.findAll())
+                    ListConvert.questionToQuestionDto(jpaQuestionInterface.findAll())
             );
         }catch (Exception e){
             logger.error(e.getMessage());
@@ -121,7 +121,7 @@ public class QuestionService {
         ResponseEntity<List<QuestionDto>> responseEntity;
         try {
             List<QuestionDto> questionDtoList =
-                    convertQuestionListToQuestionDtoList(jpaQuestionInterface.findByUserId(userId));
+                    ListConvert.questionToQuestionDto(jpaQuestionInterface.findByUserId(userId));
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(questionDtoList);
         }catch (Exception e){
             logger.error(e.getMessage());
@@ -130,24 +130,7 @@ public class QuestionService {
         return responseEntity;
     }
 
-    /**
-     * Convierte la lista Question a QuestionDto
-     * @param questionList
-     * @return  QuestionDtoList
-     */
-    private List<QuestionDto> convertQuestionListToQuestionDtoList(List<Question> questionList){
-        try{
-            List<QuestionDto> questionDtoList = new ArrayList<>();
-            for(Question question : questionList){
-                QuestionDto questionDto = new QuestionDto(question);
-                questionDtoList.add(questionDto);
-            }
-            return questionDtoList;
-        }catch (Exception e){
-            logger.error(e.getMessage());
-            return null;
-        }
-    }
+
 
     /**
      * Devuelve la lista de preguntas de un usuario
@@ -158,7 +141,7 @@ public class QuestionService {
     public ResponseEntity<List<QuestionDto>> getQuestionListInDays(int  days){
         ResponseEntity<List<QuestionDto>> responseEntity;
         try{
-            List<QuestionDto> questionDtoList = convertQuestionListToQuestionDtoList(
+            List<QuestionDto> questionDtoList = ListConvert.questionToQuestionDto(
                     jpaQuestionInterface.findByCreateDateBetween(
                             ZonedDateTime.now().minusDays(days),
                             ZonedDateTime.now())
@@ -182,7 +165,7 @@ public class QuestionService {
         try{
             TimeMeasurementsEnum timeMeasurementsEnum = TimeMeasurementsEnum.valueOf(rankOfTime.toUpperCase());
             List<QuestionDto> questionDtoList =
-                    convertQuestionListToQuestionDtoList(
+                    ListConvert.questionToQuestionDto(
                             jpaQuestionInterface.findByCreateDateBetween(
                                 ZonedDateTime.now().minusDays(timeMeasurementsEnum.getDays()),
                                 ZonedDateTime.now())
@@ -205,7 +188,7 @@ public class QuestionService {
         ResponseEntity<List<QuestionDto>> responseEntity;
         try{
             List<QuestionDto> questionDtoList =
-                    convertQuestionListToQuestionDtoList(jpaQuestionInterface.searchMatches(search));
+                    ListConvert.questionToQuestionDto(jpaQuestionInterface.searchMatches(search));
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(questionDtoList);
         }catch (Exception e){
             logger.error(e.getMessage());
