@@ -1,13 +1,14 @@
 package com.questionsandanswers.questionsandanswers.models;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * Modelo o entidad Vote (Voto)
  */
 @Entity
-@Table(name = "votes")
-public class QuestionVote {
+@Table(name = "answer_votes")
+public class AnswerVote implements Serializable {
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -19,11 +20,7 @@ public class QuestionVote {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "question_id", referencedColumnName = "id", nullable = true, updatable = false)
-    private Question question;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "answer_id", referencedColumnName = "id", nullable = true, updatable = false)
+    @JoinColumn(name = "answer_id", referencedColumnName = "id", nullable = false, updatable = false)
     private Answer answer;
 
     public Long getId() {
@@ -42,19 +39,20 @@ public class QuestionVote {
         this.user = user;
     }
 
-    public Question getQuestion() {
-        return question;
-    }
-
-    public void setQuestion(Question question) {
-        this.question = question;
-    }
-
     public Answer getAnswer() {
         return answer;
     }
 
     public void setAnswer(Answer answer) {
         this.answer = answer;
+    }
+
+    @Override
+    public String toString() {
+        return "AnswerVote{" +
+                "id=" + id +
+                ", user=" + user +
+                ", answer=" + answer +
+                '}';
     }
 }

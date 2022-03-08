@@ -1,7 +1,7 @@
 package com.questionsandanswers.questionsandanswers.services;
 
 import com.questionsandanswers.questionsandanswers.models.QuestionVote;
-import com.questionsandanswers.questionsandanswers.repository.JpaVoteInterface;
+import com.questionsandanswers.questionsandanswers.repository.JpaQuestionVoteInterface;
 import com.questionsandanswers.questionsandanswers.exceptions.Validation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,10 +12,10 @@ import org.springframework.stereotype.Service;
  * Servicio de Vote, peticiones al servidor
  */
 @Service
-public class VoteService {
+public class QuestionVoteService {
 
     @Autowired
-    private JpaVoteInterface jpaVoteInterface;
+    private JpaQuestionVoteInterface jpaQuestionVoteInterface;
 
     /**
      * Guarda un voto, devuelve true si se procesa correctamente
@@ -25,8 +25,8 @@ public class VoteService {
     public ResponseEntity<Boolean> addVote(QuestionVote questionVote){
         ResponseEntity<Boolean> responseEntity;
         try{
-            if(jpaVoteInterface.findByQuestionAndUserId(questionVote.getQuestion().getId(), questionVote.getUser().getId()) == null){
-                jpaVoteInterface.save(questionVote);
+            if(jpaQuestionVoteInterface.findByQuestionAndUserId(questionVote.getQuestion().getId(), questionVote.getUser().getId()) == null){
+                jpaQuestionVoteInterface.save(questionVote);
                 responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(true);
             }else{
                 responseEntity = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(false);
@@ -46,8 +46,8 @@ public class VoteService {
     public ResponseEntity<Boolean> removeVote(long id){
         ResponseEntity<Boolean> responseEntity;
         try {
-            Validation.notFound(id, jpaVoteInterface.findById(id).isEmpty());
-            jpaVoteInterface.deleteById(id);
+            Validation.notFound(id, jpaQuestionVoteInterface.findById(id).isEmpty());
+            jpaQuestionVoteInterface.deleteById(id);
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(true);
         }catch (Exception e){
             responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
@@ -64,7 +64,7 @@ public class VoteService {
     public ResponseEntity<Boolean> removeVoteWithQuestionAndUser(long questionId, long userId){
         ResponseEntity<Boolean> responseEntity;
         try {
-            jpaVoteInterface.removeVotesWithQuestionIdAndUserId(questionId, userId);
+            jpaQuestionVoteInterface.removeVotesWithQuestionIdAndUserId(questionId, userId);
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(true);
         }catch (Exception e){
             responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);

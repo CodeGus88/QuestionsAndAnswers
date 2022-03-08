@@ -3,6 +3,7 @@ package com.questionsandanswers.questionsandanswers.models;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,10 +31,15 @@ public class User implements Serializable {
     private List<Question> questionList;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private List<Vote> voteList;
+    private List<QuestionVote> questionVoteList;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<Answer> answerList;
 
     public User(){
-
+        questionList = new ArrayList<>();
+        questionVoteList = new ArrayList<>();
+        answerList =new ArrayList<>();
     }
 
     public User(long id, String fullName, String email, String password) {
@@ -41,6 +47,9 @@ public class User implements Serializable {
         this.fullName = fullName;
         this.email = email;
         this.password = password;
+        questionList = new ArrayList<>();
+        questionVoteList = new ArrayList<>();
+        answerList =new ArrayList<>();
     }
 
     public long getId() {
@@ -83,21 +92,32 @@ public class User implements Serializable {
         this.questionList = questionList;
     }
 
-    public List<Vote> getVoteList() {
-        return voteList;
+    public List<QuestionVote> getVoteList() {
+        return questionVoteList;
     }
 
-    public void setVoteList(List<Vote> voteList) {
-        this.voteList = voteList;
+    public void setVoteList(List<QuestionVote> questionVoteList) {
+        this.questionVoteList = questionVoteList;
+    }
+
+    public List<Answer> getAnswerList() {
+        return answerList;
+    }
+
+    public void setAnswerList(List<Answer> answerList) {
+        this.answerList = answerList;
     }
 
     @Override
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", email='" + email + '\'' +
                 ", fullName='" + fullName + '\'' +
+                ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
+                ", questionList=" + questionList +
+                ", questionVoteList=" + questionVoteList +
+                ", answerList=" + answerList +
                 '}';
     }
 }

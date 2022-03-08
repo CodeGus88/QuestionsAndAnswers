@@ -1,10 +1,7 @@
 package com.questionsandanswers.questionsandanswers.controllers;
 
-import com.questionsandanswers.questionsandanswers.exceptions.AdviceController;
-import com.questionsandanswers.questionsandanswers.models.QuestionVote;
-import com.questionsandanswers.questionsandanswers.services.QuestionVoteService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.questionsandanswers.questionsandanswers.models.AnswerVote;
+import com.questionsandanswers.questionsandanswers.services.AnswerVoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,27 +10,25 @@ import org.springframework.web.bind.annotation.*;
  * Controlador para la entidad Vote (votos)
  */
 @RestController
-@RequestMapping("api/votes")
-public class QuestionVoteController {
+@RequestMapping("api/answer-votes")
+public class AnswerVoteController {
 
     @Autowired
-    private QuestionVoteService questionVoteService;
-
-    private Logger logger = LoggerFactory.getLogger(AdviceController.class);
+    private AnswerVoteService answerVoteService;
 
     @PostMapping("create")
-    public ResponseEntity<Boolean> create(@RequestBody QuestionVote questionVote){
-        return questionVoteService.addVote(questionVote);
+    public ResponseEntity<Boolean> create(@RequestBody AnswerVote answerVote){
+        return answerVoteService.addVote(answerVote);
     }
 
     @DeleteMapping("delete/{id}")
     public ResponseEntity<Boolean> delete(@PathVariable long id){
-        return questionVoteService.removeVote(id);
+        return answerVoteService.removeVote(id);
     }
 
-    @DeleteMapping("delete/{questionId}/{userId}")
-    public ResponseEntity<Boolean> delete(@PathVariable(name = "questionId") long questionId, @PathVariable(name = "userId") long userId){
-        return questionVoteService.removeVoteWithQuestionAndUser(questionId, userId);
+    @DeleteMapping("delete/{answerId}/{userId}")
+    public ResponseEntity<Boolean> delete(@PathVariable(name = "answerId") long answerId, @PathVariable(name = "userId") long userId){
+        return answerVoteService.removeVoteWithQuestionAndUser(answerId, userId);
     }
 
 }

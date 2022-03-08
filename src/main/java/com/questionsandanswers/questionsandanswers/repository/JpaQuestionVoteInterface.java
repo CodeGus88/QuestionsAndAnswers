@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Repositorio para Vote
  */
-public interface JpaVoteInterface extends JpaRepository<QuestionVote, Long> {
+public interface JpaQuestionVoteInterface extends JpaRepository<QuestionVote, Long> {
 
     /**
      * Busca el voto de un usuario en una pregunta
@@ -18,7 +18,7 @@ public interface JpaVoteInterface extends JpaRepository<QuestionVote, Long> {
      * @param userId
      * @return vote
      */
-    @Query(value = "SELECT * FROM votes WHERE question_id = ?1 AND user_id = ?2 ", nativeQuery = true)
+    @Query(value = "SELECT * FROM question_votes WHERE question_id = ?1 AND user_id = ?2 ", nativeQuery = true)
     QuestionVote findByQuestionAndUserId(long questionId, long userId);
 
     /**
@@ -26,7 +26,7 @@ public interface JpaVoteInterface extends JpaRepository<QuestionVote, Long> {
      * @param questionId
      * @return voteList
      */
-    @Query(value = "SELECT FROM votes WHERE question_id = ?1 ", nativeQuery = true)
+    @Query(value = "SELECT FROM question_votes WHERE question_id = ?1 ", nativeQuery = true)
     List<QuestionVote> findVotesForQuestionId(long questionId);
 
     /**
@@ -36,7 +36,7 @@ public interface JpaVoteInterface extends JpaRepository<QuestionVote, Long> {
      * @return voteList
      */
     @Modifying
-    @Query(value = "REMOVE FROM votes WHERE question_id = ?1 AND user_id = ?2 ", nativeQuery = true)
+    @Query(value = "REMOVE FROM question_votes WHERE question_id = ?1 AND user_id = ?2 ", nativeQuery = true)
     List<QuestionVote> removeVotesWithQuestionIdAndUserId(long questionId, long userId);
 
 }

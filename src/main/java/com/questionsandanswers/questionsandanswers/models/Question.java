@@ -1,7 +1,9 @@
 package com.questionsandanswers.questionsandanswers.models;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -9,7 +11,7 @@ import java.util.List;
  */
 @Entity
 @Table(name = "questions")
-public class Question {
+public class Question implements Serializable {
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -19,24 +21,30 @@ public class Question {
     @Column(name = "title")
     private String title;
 
+    @Lob
     @Column(name = "body")
     private String body;
 
     @Column(name = "tags")
     private String tags;
 
-    @Column(name = "create_date")
+    @Column(name = "create_date", updatable = false)
     private ZonedDateTime createDate;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false, updatable = false)
     private User user;
 
+    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<Answer> answerList;
+
     @OneToMany(mappedBy = "question", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
-    private List<Vote> voteList;
+    private List<QuestionVote> questionVoteList;
 
     public Question(){
         user = new User();
+        questionVoteList = new ArrayList<>();
+        answerList = new ArrayList<>();
     }
     
     public Long getId() {
@@ -87,12 +95,20 @@ public class Question {
         this.user = user;
     }
 
-    public List<Vote> getVoteList() {
-        return voteList;
+    public List<QuestionVote> getVoteList() {
+        return questionVoteList;
     }
 
-    public void setVoteList(List<Vote> voteList) {
-        this.voteList = voteList;
+    public void setVoteList(List<QuestionVote> questionVoteList) {
+        this.questionVoteList = questionVoteList;
+    }
+
+    public List<Answer> getAnswerList() {
+        return answerList;
+    }
+
+    public void setAnswerList(List<Answer> answerList) {
+        this.answerList = answerList;
     }
 
     @Override
@@ -104,7 +120,8 @@ public class Question {
                 ", tags='" + tags + '\'' +
                 ", createDate=" + createDate +
                 ", user=" + user +
-                ", voteList=" + voteList +
+                ", answerList=" + answerList +
+                ", questionVoteList=" + questionVoteList +
                 '}';
     }
 }

@@ -1,5 +1,6 @@
 package com.questionsandanswers.questionsandanswers.exceptions;
 
+import com.questionsandanswers.questionsandanswers.models.Answer;
 import com.questionsandanswers.questionsandanswers.models.Question;
 import com.questionsandanswers.questionsandanswers.models.User;
 import org.springframework.http.HttpStatus;
@@ -69,4 +70,18 @@ public class Validation {
             throw new ValidationException("ERROR IN THE FORM", error, HttpStatus.BAD_REQUEST);
     }
 
+
+    /**
+     * Evalua los datos de entrada para editar y crear respuesta
+     * @param answer
+     */
+    public static void validateWhriteAnswerData(Answer answer){
+        ErrorModel error = new ErrorModel();
+
+        if(answer.getBody().isEmpty())
+            error.putError("Body is required");
+
+        if(!error.getErrors().isEmpty())
+            throw new ValidationException("ERROR IN THE FORM", error, HttpStatus.BAD_REQUEST);
+    }
 }

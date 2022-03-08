@@ -12,14 +12,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api/answers")
-public class AswerController {
+public class AnswerController {
 
     @Autowired
     private AnswerService answerService;
 
-
-    @GetMapping("/question/{questionId}")
-    public ResponseEntity<List<AnswerDto>> findByQuestionId(long questionId){
+    @GetMapping("question/{questionId}")
+    public ResponseEntity<List<AnswerDto>> findByQuestionId(@PathVariable long questionId){
         return answerService.getAnswerWithQuestionId(questionId);
     }
 

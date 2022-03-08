@@ -1,10 +1,14 @@
 package com.questionsandanswers.questionsandanswers.services.dto;
 
+import com.questionsandanswers.questionsandanswers.models.Answer;
 import com.questionsandanswers.questionsandanswers.models.Question;
 
+import java.io.Serializable;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
-public class QuestionDto {
+public class QuestionDto implements Serializable {
 
     private Long id;
 
@@ -18,7 +22,9 @@ public class QuestionDto {
 
     private UserDto user;
 
-    private VoteDto vote;
+    private QuestionVoteDto vote;
+
+    private List<AnswerDto> answerList;
 
     public QuestionDto(Question question){
         this.id = question.getId();
@@ -27,7 +33,10 @@ public class QuestionDto {
         this.tags = question.getTags();
         this.createDate = question.getCreateDate();
         this.user = new UserDto(question.getUser());
-        this.vote = new VoteDto(question.getVoteList());
+        this.vote = new QuestionVoteDto(question.getVoteList());
+        answerList = new ArrayList<>();
+            for(Answer a : question.getAnswerList())
+                answerList.add(new AnswerDto(a));
     }
 
     public Long getId() {
@@ -78,12 +87,19 @@ public class QuestionDto {
         this.user = userDto;
     }
 
-    public VoteDto getVote() {
+    public QuestionVoteDto getVote() {
         return vote;
     }
 
-    public void setVote(VoteDto vote) {
+    public void setVote(QuestionVoteDto vote) {
         this.vote = vote;
     }
 
+    public List<AnswerDto> getAnswerList() {
+        return answerList;
+    }
+
+    public void setAnswerList(List<AnswerDto> answerList) {
+        this.answerList = answerList;
+    }
 }
