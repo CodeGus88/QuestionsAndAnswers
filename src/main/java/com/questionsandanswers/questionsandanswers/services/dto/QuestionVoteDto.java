@@ -1,6 +1,7 @@
 package com.questionsandanswers.questionsandanswers.services.dto;
 
-import com.questionsandanswers.questionsandanswers.models.Vote;
+import com.questionsandanswers.questionsandanswers.models.AnswerVote;
+import com.questionsandanswers.questionsandanswers.models.QuestionVote;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,13 +11,13 @@ public class VoteDto {
     private long questionId;
     private List<VoteResume> voteResumeList;
 
-    public VoteDto(List<Vote> voteList){
+    public VoteDto(List<AnswerVote> questionVoteList){
         voteResumeList = new ArrayList<>();
-        if(voteList != null){
-            this.resulOfTheVotes = voteList.size();
-            questionId = voteList.size()>0? voteList.get(0).getQuestion().getId(): 0;
-            for(Vote vote : voteList){
-                voteResumeList.add(new VoteResume(vote.getId(), vote.getUser().getId()));
+        if(questionVoteList != null){
+            this.resulOfTheVotes = questionVoteList.size();
+            questionId = questionVoteList.size()>0? questionVoteList.get(0).getAnswer().getId(): 0;
+            for(AnswerVote questionVote : questionVoteList){
+                voteResumeList.add(new VoteResume(questionVote.getId(), questionVote.getUser().getId()));
             }
         }else{
             resulOfTheVotes = 0;
@@ -48,6 +49,7 @@ public class VoteDto {
     }
 
     class VoteResume{
+        
         private long id;
         private long userId;
 

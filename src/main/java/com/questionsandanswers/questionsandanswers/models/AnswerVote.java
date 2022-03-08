@@ -7,7 +7,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "votes")
-public class Vote {
+public class QuestionVote {
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -19,9 +19,12 @@ public class Vote {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "question_id", referencedColumnName = "id", nullable = false, updatable = false)
+    @JoinColumn(name = "question_id", referencedColumnName = "id", nullable = true, updatable = false)
     private Question question;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "answer_id", referencedColumnName = "id", nullable = true, updatable = false)
+    private Answer answer;
 
     public Long getId() {
         return id;
@@ -47,12 +50,11 @@ public class Vote {
         this.question = question;
     }
 
-    @Override
-    public String toString() {
-        return "Vote{" +
-                "id=" + id +
-                ", user=" + user +
-                ", question=" + question +
-                '}';
+    public Answer getAnswer() {
+        return answer;
+    }
+
+    public void setAnswer(Answer answer) {
+        this.answer = answer;
     }
 }
