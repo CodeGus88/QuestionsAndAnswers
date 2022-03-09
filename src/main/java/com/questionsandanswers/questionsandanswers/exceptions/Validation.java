@@ -1,6 +1,5 @@
 package com.questionsandanswers.questionsandanswers.exceptions;
 
-import com.questionsandanswers.questionsandanswers.exceptions.runtime_exception_childs.GeneralException;
 import com.questionsandanswers.questionsandanswers.exceptions.runtime_exception_childs.ValidationException;
 import com.questionsandanswers.questionsandanswers.models.Answer;
 import com.questionsandanswers.questionsandanswers.models.Question;
@@ -14,10 +13,6 @@ import java.util.List;
  * hace que se proceda o lanza una excepción
  */
 public class Validation {
-
-    public static void catchException(Exception e){
-        throw new GeneralException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-    }
 
     public static void notFound(long id, boolean exist){
         if(!exist){

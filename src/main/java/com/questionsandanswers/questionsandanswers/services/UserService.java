@@ -1,5 +1,6 @@
 package com.questionsandanswers.questionsandanswers.services;
 import com.questionsandanswers.questionsandanswers.exceptions.AdviceController;
+import com.questionsandanswers.questionsandanswers.exceptions.runtime_exception_childs.GeneralException;
 import com.questionsandanswers.questionsandanswers.services.dto.UserDto;
 import com.questionsandanswers.questionsandanswers.models.User;
 import com.questionsandanswers.questionsandanswers.repository.JpaUserInterface;
@@ -8,6 +9,7 @@ import com.questionsandanswers.questionsandanswers.services.tools.ListConvert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -54,8 +56,7 @@ public class UserService {
             return new UserDto(jpaUserInterface.save(user));
         }catch (Exception e){
             logger.error(e.getMessage());
-            logger.error(e.getMessage());
-            return null;
+            throw new GeneralException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -71,7 +72,7 @@ public class UserService {
             return new UserDto(jpaUserInterface.save(user));
         }catch (Exception e){
             logger.error(e.getMessage());
-            return null;
+            throw new GeneralException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

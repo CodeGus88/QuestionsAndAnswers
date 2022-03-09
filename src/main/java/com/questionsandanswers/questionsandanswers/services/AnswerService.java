@@ -2,6 +2,7 @@ package com.questionsandanswers.questionsandanswers.services;
 
 import com.questionsandanswers.questionsandanswers.exceptions.AdviceController;
 import com.questionsandanswers.questionsandanswers.exceptions.Validation;
+import com.questionsandanswers.questionsandanswers.exceptions.runtime_exception_childs.GeneralException;
 import com.questionsandanswers.questionsandanswers.models.Answer;
 import com.questionsandanswers.questionsandanswers.repository.JpaAnswerInterface;
 import com.questionsandanswers.questionsandanswers.services.dto.AnswerDto;
@@ -9,6 +10,7 @@ import com.questionsandanswers.questionsandanswers.services.tools.ListConvert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,8 +50,7 @@ public class AnswerService {
             answerDto = new AnswerDto(jpaAnswerInterface.save(answer));
         }catch (Exception e){
             logger.error(e.getMessage());
-            Validation.catchException(e);
-            answerDto = null;
+            throw new GeneralException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return answerDto;
     }
@@ -66,8 +67,7 @@ public class AnswerService {
             answerDto = new AnswerDto(jpaAnswerInterface.save(answer));
         }catch (Exception e){
             logger.error(e.getMessage());
-            Validation.catchException(e);
-            answerDto = null;
+            throw new GeneralException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return answerDto;
     }

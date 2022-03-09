@@ -1,6 +1,7 @@
 package com.questionsandanswers.questionsandanswers.services;
 
 import com.questionsandanswers.questionsandanswers.exceptions.AdviceController;
+import com.questionsandanswers.questionsandanswers.exceptions.runtime_exception_childs.GeneralException;
 import com.questionsandanswers.questionsandanswers.models.Question;
 import com.questionsandanswers.questionsandanswers.repository.JpaQuestionInterface;
 import com.questionsandanswers.questionsandanswers.services.dto.QuestionDto;
@@ -10,6 +11,7 @@ import com.questionsandanswers.questionsandanswers.services.tools.ListConvert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.ZonedDateTime;
@@ -67,8 +69,7 @@ public class QuestionService {
             );
         }catch (Exception e){
             logger.error(e.getMessage());
-            Validation.catchException(e);
-            return null;
+            throw new GeneralException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -85,8 +86,7 @@ public class QuestionService {
             return new QuestionDto(jpaQuestionInterface.save(question));
         }catch (Exception e){
             logger.error(e.getMessage());
-            Validation.catchException(e);
-            return null;
+            throw new GeneralException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -110,8 +110,7 @@ public class QuestionService {
             return ListConvert.questionToQuestionDto(jpaQuestionInterface.findByUserId(userId));
         }catch (Exception e){
             logger.error(e.getMessage());
-            Validation.catchException(e);
-            return null;
+            throw new GeneralException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -131,8 +130,7 @@ public class QuestionService {
             return questionDtoList;
         }catch (Exception e){
             logger.error(e.getMessage());
-            Validation.catchException(e);
-            return null;
+            throw new GeneralException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -154,8 +152,7 @@ public class QuestionService {
             return questionDtoList;
         }catch (Exception e){
             logger.error(e.getMessage());
-            Validation.catchException(e);
-            return null;
+            throw new GeneralException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -166,15 +163,13 @@ public class QuestionService {
      */
     @Transactional(readOnly = true)
     public List<QuestionDto> getQuestionListSearchMatches(String search){
-
         try{
             List<QuestionDto> questionDtoList =
                     ListConvert.questionToQuestionDto(jpaQuestionInterface.searchMatches(search));
             return questionDtoList;
         }catch (Exception e){
             logger.error(e.getMessage());
-            Validation.catchException(e);
-            return null;
+            throw new GeneralException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

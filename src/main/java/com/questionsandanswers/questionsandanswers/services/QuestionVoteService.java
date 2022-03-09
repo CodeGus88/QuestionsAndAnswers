@@ -1,12 +1,14 @@
 package com.questionsandanswers.questionsandanswers.services;
 
 import com.questionsandanswers.questionsandanswers.exceptions.AdviceController;
+import com.questionsandanswers.questionsandanswers.exceptions.runtime_exception_childs.GeneralException;
 import com.questionsandanswers.questionsandanswers.models.QuestionVote;
 import com.questionsandanswers.questionsandanswers.repository.JpaQuestionVoteInterface;
 import com.questionsandanswers.questionsandanswers.exceptions.Validation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 /**
@@ -36,8 +38,7 @@ public class QuestionVoteService {
             return true;
         }catch (Exception e){
             logger.error(e.getMessage());
-            Validation.catchException(e);
-            return false;
+            throw new GeneralException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -64,8 +65,7 @@ public class QuestionVoteService {
             return true;
         }catch (Exception e){
             logger.error(e.getMessage());
-            Validation.catchException(e);
-            return false;
+            throw new GeneralException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
