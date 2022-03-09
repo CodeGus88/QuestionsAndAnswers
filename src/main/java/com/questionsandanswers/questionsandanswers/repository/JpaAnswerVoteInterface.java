@@ -38,4 +38,20 @@ public interface JpaAnswerVoteInterface extends JpaRepository<AnswerVote, Long> 
     @Query(value = "REMOVE FROM answer_votes WHERE answer_id = ?1 AND user_id = ?2 ", nativeQuery = true)
     List<AnswerVote> removeVotesWithAnswerIdAndUserId(long questionId, long userId);
 
+    /**
+     * Verifica si un voto existe
+     */
+    boolean existsById(long id);
+
+    /**
+     * Existe el voto del usuario userId en la respuesta answerId
+     */
+    @Query(value = "SELECT CASE WHEN EXISTS ( " +
+            "SELECT * FROM answer_votes WHERE user_id = ?1 AND answer_id = ?2 " +
+            ") " +
+            "THEN TRUE ELSE FALSE " +
+            "END", nativeQuery = true)
+    boolean existByUserIdAndAnswerId(long userId, long answerId);
+
+
 }

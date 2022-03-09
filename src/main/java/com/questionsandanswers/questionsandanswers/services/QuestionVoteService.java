@@ -1,11 +1,12 @@
 package com.questionsandanswers.questionsandanswers.services;
 
+import com.questionsandanswers.questionsandanswers.exceptions.AdviceController;
 import com.questionsandanswers.questionsandanswers.models.QuestionVote;
 import com.questionsandanswers.questionsandanswers.repository.JpaQuestionVoteInterface;
 import com.questionsandanswers.questionsandanswers.exceptions.Validation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 /**
@@ -17,58 +18,54 @@ public class QuestionVoteService {
     @Autowired
     private JpaQuestionVoteInterface jpaQuestionVoteInterface;
 
+    private Logger logger = LoggerFactory.getLogger(AdviceController.class);
+
     /**
      * Guarda un voto, devuelve true si se procesa correctamente
      * @param questionVote
      * @return isSuccess
      */
-    public ResponseEntity<Boolean> addVote(QuestionVote questionVote){
-        ResponseEntity<Boolean> responseEntity;
+    public boolean addVote(QuestionVote questionVote){
+        Validation.validateWhriteVote(
+                jpaQuestionVoteInterface.existByUserIdAndQuestionId(
+                        questionVote.getUser().getId(),
+                        questionVote.getQuestion().getId()
+                ));
         try{
-            if(jpaQuestionVoteInterface.findByQuestionAndUserId(questionVote.getQuestion().getId(), questionVote.getUser().getId()) == null){
-                jpaQuestionVoteInterface.save(questionVote);
-                responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(true);
-            }else{
-                responseEntity = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(false);
-            }
+            jpaQuestionVoteInterface.save(questionVote);
+            return true;
         }catch (Exception e){
-            e.printStackTrace();
-            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
+            logger.error(e.getMessage());
+            Validation.catchException(e);
+            return false;
         }
-        return responseEntity;
     }
 
     /**
      * Elimina un voto
      * @param id, userId
-     * @return issucces
+     * @return isSucces
      */
-    public ResponseEntity<Boolean> removeVote(long id){
-        ResponseEntity<Boolean> responseEntity;
-        try {
-            Validation.notFound(id, jpaQuestionVoteInterface.findById(id).isEmpty());
-            jpaQuestionVoteInterface.deleteById(id);
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(true);
-        }catch (Exception e){
-            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
-        }
-        return  responseEntity;
+    public boolean removeVote(long id){
+        Validation.notFound(id, jpaQuestionVoteInterface.existsById(id));
+        jpaQuestionVoteInterface.deleteById(id);
+        return true;
     }
 
     /**
      * Elimina el voto de un usuario en una pregunta
      * @param questionId
      * @param userId
-     * @return
+     * @return isSuccess
      */
-    public ResponseEntity<Boolean> removeVoteWithQuestionAndUser(long questionId, long userId){
-        ResponseEntity<Boolean> responseEntity;
+    public boolean removeVoteWithQuestionAndUser(long questionId, long userId){
         try {
             jpaQuestionVoteInterface.removeVotesWithQuestionIdAndUserId(questionId, userId);
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(true);
+            return true;
         }catch (Exception e){
-            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
+            logger.error(e.getMessage());
+            Validation.catchException(e);
+            return false;
         }
-        return responseEntity;
     }
 }

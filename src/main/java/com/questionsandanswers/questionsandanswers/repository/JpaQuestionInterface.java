@@ -44,4 +44,9 @@ public interface JpaQuestionInterface extends JpaRepository<Question, Long> {
             "tags LIKE %?1% ", nativeQuery = true)
     public List<Question> searchMatches(String search);
 
+    /**
+     * Verifica si una pregunta existe
+     */
+    boolean existsById(long id);
+
 }

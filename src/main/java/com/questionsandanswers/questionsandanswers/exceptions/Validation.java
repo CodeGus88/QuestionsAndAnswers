@@ -1,5 +1,7 @@
 package com.questionsandanswers.questionsandanswers.exceptions;
 
+import com.questionsandanswers.questionsandanswers.exceptions.runtime_exception_childs.GeneralException;
+import com.questionsandanswers.questionsandanswers.exceptions.runtime_exception_childs.ValidationException;
 import com.questionsandanswers.questionsandanswers.models.Answer;
 import com.questionsandanswers.questionsandanswers.models.Question;
 import com.questionsandanswers.questionsandanswers.models.User;
@@ -13,8 +15,12 @@ import java.util.List;
  */
 public class Validation {
 
-    public static void notFound(long id, boolean isEmpty){
-        if(isEmpty){
+    public static void catchException(Exception e){
+        throw new GeneralException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    public static void notFound(long id, boolean exist){
+        if(!exist){
             throw new RuntimeException("Element with id: " + id + " not found");
         }
     }
@@ -77,11 +83,23 @@ public class Validation {
      */
     public static void validateWhriteAnswerData(Answer answer){
         ErrorModel error = new ErrorModel();
-
         if(answer.getBody().isEmpty())
             error.putError("Body is required");
 
         if(!error.getErrors().isEmpty())
             throw new ValidationException("ERROR IN THE FORM", error, HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * Evalua los datos de entrada para votar o eliminar una respuesta
+     * @param exist
+     */
+    public static void validateWhriteVote(boolean exist){
+        ErrorModel error = new ErrorModel();
+        if(exist)
+            error.putError("The user already voted for this element");
+
+        if(!error.getErrors().isEmpty())
+            throw new ValidationException("ERROR IN THE JSON BODY", error, HttpStatus.BAD_REQUEST);
     }
 }

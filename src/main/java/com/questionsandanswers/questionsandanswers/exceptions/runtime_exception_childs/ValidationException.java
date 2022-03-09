@@ -1,5 +1,6 @@
-package com.questionsandanswers.questionsandanswers.exceptions;
+package com.questionsandanswers.questionsandanswers.exceptions.runtime_exception_childs;
 
+import com.questionsandanswers.questionsandanswers.exceptions.ErrorModel;
 import org.springframework.http.HttpStatus;
 
 /**

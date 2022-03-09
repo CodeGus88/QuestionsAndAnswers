@@ -28,4 +28,9 @@ public interface JpaAnswerInterface extends JpaRepository<Answer, Long> {
      */
     List<Answer> findByUserId(long userId);
 
+    /**
+     * Verifica si un voto existe
+     */
+    boolean existsById(long id);
+
 }
