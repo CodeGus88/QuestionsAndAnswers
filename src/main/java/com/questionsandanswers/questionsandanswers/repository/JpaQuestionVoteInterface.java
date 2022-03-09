@@ -39,4 +39,19 @@ public interface JpaQuestionVoteInterface extends JpaRepository<QuestionVote, Lo
     @Query(value = "REMOVE FROM question_votes WHERE question_id = ?1 AND user_id = ?2 ", nativeQuery = true)
     List<QuestionVote> removeVotesWithQuestionIdAndUserId(long questionId, long userId);
 
+    /**
+     * Verifica si un voto existe
+     */
+    boolean existsById(long id);
+
+    /**
+     * Existe el voto del usuario userId en la pregunta questionId
+     */
+    @Query(value = "SELECT CASE WHEN EXISTS ( " +
+            "SELECT * FROM question_votes WHERE user_id = ?1 AND question_id = ?2 " +
+            ") " +
+            "THEN TRUE ELSE FALSE " +
+            "END", nativeQuery = true)
+    boolean existByUserIdAndQuestionId(long userId, long questionId);
+
 }

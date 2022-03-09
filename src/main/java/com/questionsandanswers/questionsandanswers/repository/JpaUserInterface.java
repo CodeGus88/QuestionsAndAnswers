@@ -18,4 +18,9 @@ public interface JpaUserInterface extends JpaRepository<User, Long> {
      */
     List<User> findByEmail(String id);
 
+
+    /**
+     * Verifica si un usuario existe
+     */
+    boolean existsById(long id);
 }

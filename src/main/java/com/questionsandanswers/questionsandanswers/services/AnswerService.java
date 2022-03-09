@@ -2,6 +2,7 @@ package com.questionsandanswers.questionsandanswers.services;
 
 import com.questionsandanswers.questionsandanswers.exceptions.AdviceController;
 import com.questionsandanswers.questionsandanswers.exceptions.Validation;
+import com.questionsandanswers.questionsandanswers.exceptions.runtime_exception_childs.GeneralException;
 import com.questionsandanswers.questionsandanswers.models.Answer;
 import com.questionsandanswers.questionsandanswers.repository.JpaAnswerInterface;
 import com.questionsandanswers.questionsandanswers.services.dto.AnswerDto;
@@ -10,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,14 +30,10 @@ public class AnswerService {
      * @return answerDtoList
      */
     @Transactional(readOnly = true)
-    public ResponseEntity<List<AnswerDto>> getAnswerWithQuestionId(long questionId){
-        ResponseEntity<List<AnswerDto>> responseEntity;
-        responseEntity = ResponseEntity.status(HttpStatus.OK).body(
-            ListConvert.answerToAnswerDto(
+    public List<AnswerDto> getAnswerWithQuestionId(long questionId){
+        return ListConvert.answerToAnswerDto(
                 jpaAnswerInterface.findByQuestionId(questionId)
-            )
         );
-        return responseEntity;
     }
 
     /**
@@ -45,50 +41,43 @@ public class AnswerService {
      * @param answer
      * return answerDto
      */
-    public ResponseEntity<AnswerDto> saveAnswer(Answer answer) {
-        ResponseEntity<AnswerDto> responseEntity;
+    public AnswerDto saveAnswer(Answer answer) {
         answer.setId(0L);
         answer.setCreateDate(ZonedDateTime.now());
         Validation.validateWhriteAnswerData(answer);
+        AnswerDto answerDto;
         try{
-            responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(
-                new AnswerDto(
-                    jpaAnswerInterface.save(answer)
-                )
-            );
+            answerDto = new AnswerDto(jpaAnswerInterface.save(answer));
         }catch (Exception e){
-            e.getMessage();
             logger.error(e.getMessage());
-            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            throw new GeneralException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return responseEntity;
+        return answerDto;
     }
 
     /**
      * Actualiza una respuesta
      * @param answer
      */
-    public ResponseEntity<AnswerDto> updateAnswer(Answer answer) {
-        ResponseEntity<AnswerDto> responseEntity;
-        Validation.notFound(answer.getId(), jpaAnswerInterface.findById(answer.getId()).isEmpty());
+    public AnswerDto updateAnswer(Answer answer) {
+        Validation.notFound(answer.getId(), jpaAnswerInterface.existsById(answer.getId()));
         Validation.validateWhriteAnswerData(answer);
+        AnswerDto answerDto;
         try{
-            responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(
-                    new AnswerDto(jpaAnswerInterface.save(answer))
-            );
+            answerDto = new AnswerDto(jpaAnswerInterface.save(answer));
         }catch (Exception e){
             logger.error(e.getMessage());
-            responseEntity = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(null);
+            throw new GeneralException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return responseEntity;
+        return answerDto;
     }
 
     /**
      * Elimina una respuesta con id
      * @param id
      */
-    public void deleteUser(Long id) {
-        Validation.notFound(id, jpaAnswerInterface.findById(id).isEmpty());
+    public void deleteAnswer(Long id) {
+        Validation.notFound(id, jpaAnswerInterface.existsById(id));
         jpaAnswerInterface.deleteById(id);
     }
 

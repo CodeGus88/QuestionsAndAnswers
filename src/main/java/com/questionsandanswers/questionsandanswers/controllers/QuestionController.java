@@ -4,6 +4,7 @@ import com.questionsandanswers.questionsandanswers.models.Question;
 import com.questionsandanswers.questionsandanswers.services.QuestionService;
 import com.questionsandanswers.questionsandanswers.services.dto.QuestionDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -16,26 +17,42 @@ import java.util.List;
 public class QuestionController {
 
     @Autowired
-    QuestionService questionService;
+    private QuestionService questionService;
 
     @GetMapping
     public ResponseEntity<List<QuestionDto>> questionList(){
-        return questionService.getQuestionList();
+        ResponseEntity<List<QuestionDto>> responseEntity;
+        responseEntity = ResponseEntity.status(HttpStatus.OK).body(
+                questionService.getQuestionList()
+        );
+        return responseEntity;
     }
 
     @GetMapping("{id}")
     public ResponseEntity<QuestionDto> findQuestionById(@PathVariable long id){
-        return questionService.getQuestion(id);
+        ResponseEntity<QuestionDto> responseEntity;
+        responseEntity = ResponseEntity.status(HttpStatus.OK).body(
+                questionService.getQuestion(id)
+        );
+        return responseEntity;
     }
 
     @PostMapping("create")
     public ResponseEntity<QuestionDto> create(@RequestBody Question question){
-        return questionService.saveQuestion(question);
+        ResponseEntity<QuestionDto> responseEntity;
+        responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(
+                questionService.saveQuestion(question)
+        );
+        return responseEntity;
     }
 
     @PutMapping("update")
     public ResponseEntity<QuestionDto> update(@RequestBody Question question){
-        return questionService.updateQuestion(question);
+        ResponseEntity<QuestionDto> responseEntity;
+        responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(
+                questionService.updateQuestion(question)
+        );
+        return responseEntity;
     }
 
     @DeleteMapping("delete/{id}")
@@ -45,21 +62,37 @@ public class QuestionController {
 
     @GetMapping("user/{userId}")
     public ResponseEntity<List<QuestionDto>> userQuestionList(@PathVariable long userId){
-        return questionService.userQuestionList(userId);
+        ResponseEntity<List<QuestionDto>> responseEntity;
+        responseEntity = ResponseEntity.status(HttpStatus.OK).body(
+                questionService.userQuestionList(userId)
+        );
+        return responseEntity;
     }
 
     @GetMapping("in/{days}")
     public ResponseEntity<List<QuestionDto>>  userQuestionListInDays(@PathVariable int days){
-        return questionService.getQuestionListInDays(days);
+        ResponseEntity<List<QuestionDto>> responseEntity;
+        responseEntity = ResponseEntity.status(HttpStatus.OK).body(
+                questionService.getQuestionListInDays(days)
+        );
+        return responseEntity;
     }
 
     @GetMapping("latest/{rankOfTime}")
     public ResponseEntity<List<QuestionDto>> userLatestQuestionList(@PathVariable String rankOfTime){
-        return questionService.getQuestionListInDays(rankOfTime);
+        ResponseEntity<List<QuestionDto>> responseEntity;
+        responseEntity = ResponseEntity.status(HttpStatus.OK).body(
+                questionService.getQuestionListInDays(rankOfTime)
+        );
+        return responseEntity;
     }
     @GetMapping("search/{search}")
     public ResponseEntity<List<QuestionDto>>  search(@PathVariable String search){
-        return questionService.getQuestionListSearchMatches(search);
+        ResponseEntity<List<QuestionDto>> responseEntity;
+        responseEntity = ResponseEntity.status(HttpStatus.OK).body(
+                questionService.getQuestionListSearchMatches(search)
+        );
+        return responseEntity;
     }
 
 }

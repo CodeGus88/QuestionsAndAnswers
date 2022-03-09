@@ -1,5 +1,7 @@
 package com.questionsandanswers.questionsandanswers.exceptions;
 
+import com.questionsandanswers.questionsandanswers.exceptions.runtime_exception_childs.GeneralException;
+import com.questionsandanswers.questionsandanswers.exceptions.runtime_exception_childs.ValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -19,6 +21,16 @@ public class AdviceController {
     @ExceptionHandler(value = RuntimeException.class)
     public ResponseEntity<String> requestException(RuntimeException e){
         return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    /**
+     * Responde con el mensaje de la excepción not found
+     * @param e
+     * @return responEntity
+     */
+    @ExceptionHandler(value = GeneralException.class)
+    public ResponseEntity<String> generalException(GeneralException e){
+        return new ResponseEntity<>(e.getMessage(), e.getStatus());
     }
 
     /**
