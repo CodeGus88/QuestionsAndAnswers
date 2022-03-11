@@ -1,23 +1,31 @@
 package com.questionsandanswers.questionsandanswers.controllers;
 
+import com.questionsandanswers.questionsandanswers.auth.security.services.UserDetailsServiceImpl;
+import com.questionsandanswers.questionsandanswers.exceptions.Validation;
 import com.questionsandanswers.questionsandanswers.models.Question;
 import com.questionsandanswers.questionsandanswers.services.QuestionService;
-import com.questionsandanswers.questionsandanswers.services.dto.QuestionDto;
+import com.questionsandanswers.questionsandanswers.models.dto.QuestionDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
  * Controlador para la entidad Question (preguntas)
  */
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("api/questions")
+@RequestMapping("/api/questions")
 public class QuestionController {
 
     @Autowired
     private QuestionService questionService;
+
+    @Autowired
+    private UserDetailsServiceImpl authUser;
 
     @GetMapping
     public ResponseEntity<List<QuestionDto>> questionList(){
@@ -38,7 +46,9 @@ public class QuestionController {
     }
 
     @PostMapping("create")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<QuestionDto> create(@RequestBody Question question){
+        question.getUser().setId(authUser.loadUserByUsernameInfo(SecurityContextHolder.getContext().getAuthentication().getName()).getId());
         ResponseEntity<QuestionDto> responseEntity;
         responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(
                 questionService.saveQuestion(question)
@@ -47,7 +57,9 @@ public class QuestionController {
     }
 
     @PutMapping("update")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<QuestionDto> update(@RequestBody Question question){
+        check(question.getId());
         ResponseEntity<QuestionDto> responseEntity;
         responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(
                 questionService.updateQuestion(question)
@@ -56,7 +68,9 @@ public class QuestionController {
     }
 
     @DeleteMapping("delete/{id}")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public void delete(@PathVariable long id){
+        check(id);
         questionService.deleteQuestion(id);
     }
 
@@ -93,6 +107,17 @@ public class QuestionController {
                 questionService.getQuestionListSearchMatches(search)
         );
         return responseEntity;
+    }
+
+    /**
+     * Verifica que sea el autor del registro antes de editar o eliminar
+     * @param questionId
+     */
+    private void check(long questionId){
+        Validation.validateAuthor(
+                authUser.loadUserByUsernameInfo(SecurityContextHolder.getContext().getAuthentication().getName()),
+                questionService.getQuestion(questionId).getId()
+        );
     }
 
 }

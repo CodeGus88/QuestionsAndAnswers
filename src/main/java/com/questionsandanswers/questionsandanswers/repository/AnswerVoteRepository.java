@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Repositorio para Vote
  */
-public interface JpaAnswerVoteInterface extends JpaRepository<AnswerVote, Long> {
+public interface AnswerVoteRepository extends JpaRepository<AnswerVote, Long> {
 
     /**
      * Busca el voto de un usuario en una pregunta

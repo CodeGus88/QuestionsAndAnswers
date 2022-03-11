@@ -4,12 +4,14 @@ import com.questionsandanswers.questionsandanswers.exceptions.AdviceController;
 import com.questionsandanswers.questionsandanswers.exceptions.Validation;
 import com.questionsandanswers.questionsandanswers.exceptions.runtime_exception_childs.GeneralException;
 import com.questionsandanswers.questionsandanswers.models.AnswerVote;
-import com.questionsandanswers.questionsandanswers.repository.JpaAnswerVoteInterface;
+import com.questionsandanswers.questionsandanswers.repository.AnswerVoteRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 /**
  * Servicio de Vote, peticiones al servidor
@@ -18,9 +20,20 @@ import org.springframework.stereotype.Service;
 public class AnswerVoteService {
 
     @Autowired
-    private JpaAnswerVoteInterface jpaAnswerVoteInterface;
+    private AnswerVoteRepository answerVoteRepository;
 
     private Logger logger = LoggerFactory.getLogger(AdviceController.class);
+
+    /**
+     * Devuelve una pregunta, a partir de su id
+     * @param id
+     * @return answerVote
+     */
+    public AnswerVote getAnswerVote(long id){
+        Optional<AnswerVote> optional = answerVoteRepository.findById(id);
+        Validation.notFound(id, !optional.isEmpty());
+        return optional.get();
+    }
 
     /**
      * Guarda un voto, devuelve true si se procesa correctamente
@@ -29,12 +42,12 @@ public class AnswerVoteService {
      */
     public boolean addVote(AnswerVote answerVote){
         Validation.validateWhriteVote(
-                jpaAnswerVoteInterface.existByUserIdAndAnswerId(
+                answerVoteRepository.existByUserIdAndAnswerId(
                         answerVote.getUser().getId(),
                         answerVote.getAnswer().getId()
                 ));
         try{
-            jpaAnswerVoteInterface.save(answerVote);
+            answerVoteRepository.save(answerVote);
             return true;
         }catch (Exception e){
             logger.error(e.getMessage());
@@ -48,8 +61,8 @@ public class AnswerVoteService {
      * @return isSucces
      */
     public boolean removeVote(long id){
-        Validation.notFound(id, jpaAnswerVoteInterface.existsById(id));
-        jpaAnswerVoteInterface.deleteById(id);
+        Validation.notFound(id, answerVoteRepository.existsById(id));
+        answerVoteRepository.deleteById(id);
         return true;
     }
 
@@ -61,7 +74,7 @@ public class AnswerVoteService {
      */
     public boolean removeVoteWithQuestionAndUser(long answerId, long userId){
         try {
-            jpaAnswerVoteInterface.removeVotesWithAnswerIdAndUserId(answerId, userId);
+            answerVoteRepository.removeVotesWithAnswerIdAndUserId(answerId, userId);
             return true;
         }catch (Exception e){
             logger.error(e.getMessage());

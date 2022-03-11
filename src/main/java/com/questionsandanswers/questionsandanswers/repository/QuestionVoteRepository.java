@@ -4,13 +4,12 @@ import com.questionsandanswers.questionsandanswers.models.QuestionVote;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-
 import java.util.List;
 
 /**
  * Repositorio para Vote
  */
-public interface JpaQuestionVoteInterface extends JpaRepository<QuestionVote, Long> {
+public interface QuestionVoteRepository extends JpaRepository<QuestionVote, Long> {
 
     /**
      * Busca el voto de un usuario en una pregunta

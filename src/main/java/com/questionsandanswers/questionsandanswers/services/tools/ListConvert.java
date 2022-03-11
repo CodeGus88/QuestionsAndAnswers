@@ -3,9 +3,9 @@ package com.questionsandanswers.questionsandanswers.services.tools;
 import com.questionsandanswers.questionsandanswers.models.Answer;
 import com.questionsandanswers.questionsandanswers.models.Question;
 import com.questionsandanswers.questionsandanswers.models.User;
-import com.questionsandanswers.questionsandanswers.services.dto.AnswerDto;
-import com.questionsandanswers.questionsandanswers.services.dto.QuestionDto;
-import com.questionsandanswers.questionsandanswers.services.dto.UserDto;
+import com.questionsandanswers.questionsandanswers.models.dto.AnswerDto;
+import com.questionsandanswers.questionsandanswers.models.dto.QuestionDto;
+import com.questionsandanswers.questionsandanswers.models.dto.UserDto;
 
 import java.util.ArrayList;
 import java.util.List;

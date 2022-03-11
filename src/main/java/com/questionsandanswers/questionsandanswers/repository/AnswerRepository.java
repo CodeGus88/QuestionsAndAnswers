@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface JpaAnswerInterface extends JpaRepository<Answer, Long> {
+public interface AnswerRepository extends JpaRepository<Answer, Long> {
 
     /**
      * Devuelve la respuesta con id
@@ -13,13 +13,6 @@ public interface JpaAnswerInterface extends JpaRepository<Answer, Long> {
      * @return answerList
      */
     List<Answer> findByQuestionId(long questionId);
-
-    /**
-     * Devuelve la respuesta con id
-     * @param id
-     * @return answerList
-     */
-    List<Answer> findById(long id);
 
     /**
      * devuelve las respuestas de un usuario
