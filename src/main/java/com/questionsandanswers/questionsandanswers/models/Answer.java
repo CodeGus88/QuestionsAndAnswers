@@ -85,15 +85,4 @@ public class Answer implements Serializable {
         this.answerVoteList = answerVoteList;
     }
 
-    @Override
-    public String toString() {
-        return "Answer{" +
-                "id=" + id +
-                ", body='" + body + '\'' +
-                ", createDate=" + createDate +
-                ", user=" + user +
-                ", question=" + question +
-                ", answerVoteList=" + answerVoteList +
-                '}';
-    }
 }

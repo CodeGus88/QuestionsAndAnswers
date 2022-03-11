@@ -1,23 +1,24 @@
-package com.questionsandanswers.questionsandanswers.services.dto;
+package com.questionsandanswers.questionsandanswers.models.dto;
 
-import com.questionsandanswers.questionsandanswers.models.QuestionVote;
+import com.questionsandanswers.questionsandanswers.models.AnswerVote;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class QuestionVoteDto implements Serializable {
+public class AnswerVoteDto implements Serializable {
+
     private int resulOfTheVotes;
     private long questionId;
     private List<VoteResume> voteResumeList;
 
-    public QuestionVoteDto(List<QuestionVote> questionVoteList){
+    public AnswerVoteDto(List<AnswerVote> answerVoteList){
         voteResumeList = new ArrayList<>();
-        if(questionVoteList != null){
-            this.resulOfTheVotes = questionVoteList.size();
-            questionId = questionVoteList.size()>0? questionVoteList.get(0).getQuestion().getId(): 0;
-            for(QuestionVote questionVote : questionVoteList){
-                voteResumeList.add(new VoteResume(questionVote.getId(), questionVote.getUser().getId()));
+        if(answerVoteList != null){
+            this.resulOfTheVotes = answerVoteList.size();
+            questionId = answerVoteList.size()>0? answerVoteList.get(0).getAnswer().getId(): 0;
+            for(AnswerVote answerVote : answerVoteList){
+                voteResumeList.add(new VoteResume(answerVote.getId(), answerVote.getUser().getId()));
             }
         }else{
             resulOfTheVotes = 0;

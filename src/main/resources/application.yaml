@@ -1,8 +1,22 @@
 spring:
+  h2:
+    console:
+      enabled: true
+      path: /h2
   datasource:
-    url: jdbc:h2:mem:mydb
-    username: sa
-    password: password
+    url: jdbc:h2:file:./data/h2db
+    username: user
+    password: pw
     driverClassName: org.h2.Driver
   jpa:
     spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+
+# App Properties
+askme:
+  app:
+    jwtCookieName: askme
+    jwtSecret: askmeSecretKey
+    jwtExpirationMs: '86400000'
+

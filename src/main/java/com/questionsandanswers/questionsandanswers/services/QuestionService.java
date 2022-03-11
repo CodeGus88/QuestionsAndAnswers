@@ -3,9 +3,9 @@ package com.questionsandanswers.questionsandanswers.services;
 import com.questionsandanswers.questionsandanswers.exceptions.AdviceController;
 import com.questionsandanswers.questionsandanswers.exceptions.runtime_exception_childs.GeneralException;
 import com.questionsandanswers.questionsandanswers.models.Question;
-import com.questionsandanswers.questionsandanswers.repository.JpaQuestionInterface;
-import com.questionsandanswers.questionsandanswers.services.dto.QuestionDto;
-import com.questionsandanswers.questionsandanswers.services.enums.TimeMeasurementsEnum;
+import com.questionsandanswers.questionsandanswers.repository.QuestionRepository;
+import com.questionsandanswers.questionsandanswers.models.dto.QuestionDto;
+import com.questionsandanswers.questionsandanswers.models.enums.TimeMeasurementsEnum;
 import com.questionsandanswers.questionsandanswers.exceptions.Validation;
 import com.questionsandanswers.questionsandanswers.services.tools.ListConvert;
 import org.slf4j.Logger;
@@ -25,7 +25,7 @@ import java.util.Optional;
 public class QuestionService {
 
     @Autowired
-    private JpaQuestionInterface jpaQuestionInterface;
+    private QuestionRepository questionRepository;
 
     private Logger logger = LoggerFactory.getLogger(AdviceController.class);
 
@@ -36,7 +36,7 @@ public class QuestionService {
     @Transactional(readOnly = true)
     public List<QuestionDto> getQuestionList(){
         return ListConvert.questionToQuestionDto(
-                jpaQuestionInterface.findAll()
+                questionRepository.findAll()
         );
     }
 
@@ -47,8 +47,8 @@ public class QuestionService {
      */
     @Transactional(readOnly = true)
     public QuestionDto getQuestion(Long id){
-        Optional<Question> optional = jpaQuestionInterface.findById(id);
-        Validation.notFound(id, optional.isEmpty());
+        Optional<Question> optional = questionRepository.findById(id);
+        Validation.notFound(id, !optional.isEmpty());
         return new QuestionDto(
                 optional.get()
         );
@@ -65,7 +65,7 @@ public class QuestionService {
         try{
             question.setId(0L);
             return new QuestionDto(
-                    jpaQuestionInterface.save(question)
+                    questionRepository.save(question)
             );
         }catch (Exception e){
             logger.error(e.getMessage());
@@ -79,11 +79,11 @@ public class QuestionService {
      * @return updateQuestion
      */
     public QuestionDto updateQuestion(Question question){
-        Validation.notFound(question.getId(), jpaQuestionInterface.existsById(question.getId()));
+        Validation.notFound(question.getId(), questionRepository.existsById(question.getId()));
         Validation.validateWhriteQuestionData(question);
         try{
-            QuestionDto questionDto = new QuestionDto(jpaQuestionInterface.save(question));
-            return new QuestionDto(jpaQuestionInterface.save(question));
+            QuestionDto questionDto = new QuestionDto(questionRepository.save(question));
+            return new QuestionDto(questionRepository.save(question));
         }catch (Exception e){
             logger.error(e.getMessage());
             throw new GeneralException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -95,8 +95,8 @@ public class QuestionService {
      * @param id
      */
     public void deleteQuestion(Long id){
-        Validation.notFound(id, jpaQuestionInterface.existsById(id));
-        jpaQuestionInterface.deleteById(id);
+        Validation.notFound(id, questionRepository.existsById(id));
+        questionRepository.deleteById(id);
     }
 
     /**
@@ -107,7 +107,7 @@ public class QuestionService {
     @Transactional(readOnly = true)
     public List<QuestionDto> userQuestionList(long userId){
         try {
-            return ListConvert.questionToQuestionDto(jpaQuestionInterface.findByUserId(userId));
+            return ListConvert.questionToQuestionDto(questionRepository.findByUserId(userId));
         }catch (Exception e){
             logger.error(e.getMessage());
             throw new GeneralException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -123,7 +123,7 @@ public class QuestionService {
     public List<QuestionDto> getQuestionListInDays(int  days){
         try{
             List<QuestionDto> questionDtoList = ListConvert.questionToQuestionDto(
-                    jpaQuestionInterface.findByCreateDateBetween(
+                    questionRepository.findByCreateDateBetween(
                             ZonedDateTime.now().minusDays(days),
                             ZonedDateTime.now())
             );
@@ -145,7 +145,7 @@ public class QuestionService {
             TimeMeasurementsEnum timeMeasurementsEnum = TimeMeasurementsEnum.valueOf(rankOfTime.toUpperCase());
             List<QuestionDto> questionDtoList =
                     ListConvert.questionToQuestionDto(
-                            jpaQuestionInterface.findByCreateDateBetween(
+                            questionRepository.findByCreateDateBetween(
                                 ZonedDateTime.now().minusDays(timeMeasurementsEnum.getDays()),
                                 ZonedDateTime.now())
                     );
@@ -165,7 +165,7 @@ public class QuestionService {
     public List<QuestionDto> getQuestionListSearchMatches(String search){
         try{
             List<QuestionDto> questionDtoList =
-                    ListConvert.questionToQuestionDto(jpaQuestionInterface.searchMatches(search));
+                    ListConvert.questionToQuestionDto(questionRepository.searchMatches(search));
             return questionDtoList;
         }catch (Exception e){
             logger.error(e.getMessage());

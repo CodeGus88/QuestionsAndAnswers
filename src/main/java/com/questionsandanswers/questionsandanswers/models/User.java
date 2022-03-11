@@ -1,16 +1,22 @@
 package com.questionsandanswers.questionsandanswers.models;
-
-
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Modelo o entidad User (Usuario)
  */
 @Entity
-@Table(name = "users")
+@Table(name = "users",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = "username"),
+                @UniqueConstraint(columnNames = "email")
+        })
 public class User implements Serializable {
 
     @Id
@@ -18,14 +24,26 @@ public class User implements Serializable {
     @Column(name = "id")
     private long id;
 
-    @Column(name = "full_name")
-    private String fullName;
+    @NotBlank
+    @Size(max = 20)
+    @Column(name = "username")
+    private String username;
 
+    @NotBlank
+    @Size(max = 50)
     @Column(name = "email")
     private String email;
 
+    @NotBlank
+    @Size(max = 120)
     @Column(name = "password")
     private String password;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Question> questionList;
@@ -40,11 +58,21 @@ public class User implements Serializable {
         questionList = new ArrayList<>();
         questionVoteList = new ArrayList<>();
         answerList =new ArrayList<>();
+        roles = new HashSet<>();
+    }
+    public User(String username, String email, String password) {
+        questionList = new ArrayList<>();
+        questionVoteList = new ArrayList<>();
+        answerList =new ArrayList<>();
+        roles = new HashSet<>();
+        this.username = username;
+        this.email = email;
+        this.password = password;
     }
 
-    public User(long id, String fullName, String email, String password) {
+    public User(long id, String username, String email, String password) {
         this.id = id;
-        this.fullName = fullName;
+        this.username = username;
         this.email = email;
         this.password = password;
         questionList = new ArrayList<>();
@@ -68,12 +96,12 @@ public class User implements Serializable {
         this.email = email;
     }
 
-    public String getFullName() {
-        return fullName;
+    public String getUsername() {
+        return username;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {
@@ -108,13 +136,30 @@ public class User implements Serializable {
         this.answerList = answerList;
     }
 
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
+
+    public List<QuestionVote> getQuestionVoteList() {
+        return questionVoteList;
+    }
+
+    public void setQuestionVoteList(List<QuestionVote> questionVoteList) {
+        this.questionVoteList = questionVoteList;
+    }
+
     @Override
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", fullName='" + fullName + '\'' +
+                ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
+                ", roles=" + roles +
                 ", questionList=" + questionList +
                 ", questionVoteList=" + questionVoteList +
                 ", answerList=" + answerList +

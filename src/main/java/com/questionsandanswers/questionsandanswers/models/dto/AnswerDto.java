@@ -1,4 +1,4 @@
-package com.questionsandanswers.questionsandanswers.services.dto;
+package com.questionsandanswers.questionsandanswers.models.dto;
 
 import com.questionsandanswers.questionsandanswers.models.Answer;
 

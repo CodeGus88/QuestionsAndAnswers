@@ -1,4 +1,4 @@
-package com.questionsandanswers.questionsandanswers.services.enums;
+package com.questionsandanswers.questionsandanswers.models.enums;
 
 public enum UserEnum {
         USER,

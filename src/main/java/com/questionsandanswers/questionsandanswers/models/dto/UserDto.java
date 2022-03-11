@@ -1,4 +1,4 @@
-package com.questionsandanswers.questionsandanswers.services.dto;
+package com.questionsandanswers.questionsandanswers.models.dto;
 
 import com.questionsandanswers.questionsandanswers.models.User;
 
@@ -7,12 +7,12 @@ import java.io.Serializable;
 public class UserDto implements Serializable {
 
     private long id;
-    private String fullName;
+    private String username;
     private String email;
 
     public UserDto(User user) {
         this.id = user.getId();
-        this.fullName = user.getFullName();
+        this.username = user.getUsername();
         this.email = user.getEmail();
     }
 
@@ -32,12 +32,12 @@ public class UserDto implements Serializable {
         this.email = email;
     }
 
-    public String getFullName() {
-        return fullName;
+    public String getUsername() {
+        return username;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
 }

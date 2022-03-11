@@ -10,14 +10,14 @@ import java.util.List;
 /**
  * Repositorio para Question
  */
-public interface JpaQuestionInterface extends JpaRepository<Question, Long> {
+public interface QuestionRepository extends JpaRepository<Question, Long> {
 
     /**
      * Busca un las preguntas de un usuario
      * @param userId
      * @return questionList
      */
-    public List<Question> findByUserId(long userId);
+    List<Question> findByUserId(long userId);
 
 
     /**
@@ -29,7 +29,7 @@ public interface JpaQuestionInterface extends JpaRepository<Question, Long> {
     @Query(value = "SELECT * " +
             "FROM questions " +
             "WHERE create_date BETWEEN ?1 and ?2", nativeQuery = true)
-    public List<Question> findByCreateDateBetween(ZonedDateTime start, ZonedDateTime end);
+    List<Question> findByCreateDateBetween(ZonedDateTime start, ZonedDateTime end);
 
     /**
      * Busca coincidencias, comando en cuenta los campos title, body y tags de la entidad question
@@ -42,7 +42,7 @@ public interface JpaQuestionInterface extends JpaRepository<Question, Long> {
             "title LIKE %?1% OR " +
             "body LIKE %?1% OR " +
             "tags LIKE %?1% ", nativeQuery = true)
-    public List<Question> searchMatches(String search);
+    List<Question> searchMatches(String search);
 
     /**
      * Verifica si una pregunta existe

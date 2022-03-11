@@ -1,9 +1,9 @@
 package com.questionsandanswers.questionsandanswers.services;
 import com.questionsandanswers.questionsandanswers.exceptions.AdviceController;
 import com.questionsandanswers.questionsandanswers.exceptions.runtime_exception_childs.GeneralException;
-import com.questionsandanswers.questionsandanswers.services.dto.UserDto;
+import com.questionsandanswers.questionsandanswers.models.dto.UserDto;
 import com.questionsandanswers.questionsandanswers.models.User;
-import com.questionsandanswers.questionsandanswers.repository.JpaUserInterface;
+import com.questionsandanswers.questionsandanswers.repository.UserRepository;
 import com.questionsandanswers.questionsandanswers.exceptions.Validation;
 import com.questionsandanswers.questionsandanswers.services.tools.ListConvert;
 import org.slf4j.Logger;
@@ -21,7 +21,7 @@ import java.util.Optional;
 public class UserService {
 
     @Autowired
-    private JpaUserInterface jpaUserInterface;;
+    private UserRepository userRepository;;
 
     private Logger logger = LoggerFactory.getLogger(AdviceController.class);
 
@@ -30,7 +30,7 @@ public class UserService {
      * @return userList
      */
     public List<UserDto> getUserList() {
-         return ListConvert.userToUserDto(jpaUserInterface.findAll());
+         return ListConvert.userToUserDto(userRepository.findAll());
     }
 
     /**
@@ -39,7 +39,7 @@ public class UserService {
      * @return userDto
      */
     public UserDto getUser(Long id) {
-        Optional<User> optional = jpaUserInterface.findById(id);
+        Optional<User> optional = userRepository.findById(id);
         Validation.notFound(id, optional.isEmpty());
         return new UserDto(optional.get());
     }
@@ -51,9 +51,9 @@ public class UserService {
      */
     public UserDto saveUser(User user) {
         user.setId(0L);
-        Validation.validateWhriteUserData(user, jpaUserInterface.findByEmail(user.getEmail()), true);
+        Validation.validateWhriteUserData(user, userRepository.findByEmail(user.getEmail()), true);
         try{
-            return new UserDto(jpaUserInterface.save(user));
+            return new UserDto(userRepository.save(user));
         }catch (Exception e){
             logger.error(e.getMessage());
             throw new GeneralException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -66,10 +66,10 @@ public class UserService {
      */
     public UserDto updateUser(User user) {
 
-        Validation.notFound(user.getId(), jpaUserInterface.existsById(user.getId()));
-        Validation.validateWhriteUserData(user, jpaUserInterface.findByEmail(user.getEmail()), false);
+        Validation.notFound(user.getId(), userRepository.existsById(user.getId()));
+        Validation.validateWhriteUserData(user, userRepository.findByEmail(user.getEmail()), false);
         try{
-            return new UserDto(jpaUserInterface.save(user));
+            return new UserDto(userRepository.save(user));
         }catch (Exception e){
             logger.error(e.getMessage());
             throw new GeneralException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -81,7 +81,7 @@ public class UserService {
      * @param id
      */
     public void deleteUser(Long id) {
-        Validation.notFound(id, jpaUserInterface.existsById(id));
-        jpaUserInterface.deleteById(id);
+        Validation.notFound(id, userRepository.existsById(id));
+        userRepository.deleteById(id);
     }
 }

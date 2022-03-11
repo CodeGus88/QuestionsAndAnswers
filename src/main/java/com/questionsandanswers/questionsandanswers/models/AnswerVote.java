@@ -47,12 +47,4 @@ public class AnswerVote implements Serializable {
         this.answer = answer;
     }
 
-    @Override
-    public String toString() {
-        return "AnswerVote{" +
-                "id=" + id +
-                ", user=" + user +
-                ", answer=" + answer +
-                '}';
-    }
 }
