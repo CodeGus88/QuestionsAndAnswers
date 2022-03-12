@@ -5,7 +5,6 @@ import com.questionsandanswers.questionsandanswers.exceptions.runtime_exception_
 import com.questionsandanswers.questionsandanswers.models.Answer;
 import com.questionsandanswers.questionsandanswers.models.Question;
 import com.questionsandanswers.questionsandanswers.models.User;
-import com.questionsandanswers.questionsandanswers.models.dto.QuestionDto;
 import com.questionsandanswers.questionsandanswers.models.enums.ERole;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.GrantedAuthority;
@@ -31,7 +30,7 @@ public class Validation {
      * @param emailWithMatches
      * @param IS_NEW_USER
      */
-    public static void validateWhriteUserData(User user, List<User> emailWithMatches, final boolean IS_NEW_USER){
+    public static void validateWhriteUserData(User user, List<User> emailWithMatches, boolean IS_NEW_USER){
         ErrorModel error = new ErrorModel();
 
         if(user.getUsername().equals("anonymousUser"))
@@ -73,9 +72,6 @@ public class Validation {
         if(question.getTags().isEmpty())
             error.putError("Tags is required!");
 
-        if(question.getUser().getId() < 0)
-            error.putError("User is required!");
-
         if(!error.getErrors().isEmpty())
             throw new ValidationException("ERROR IN THE FORM", error, HttpStatus.BAD_REQUEST);
     }
@@ -116,7 +112,6 @@ public class Validation {
      */
     public static void validateAuthor(UserDetailsImpl authUser, long oldQuestionId){
         ErrorModel error = new ErrorModel();
-
         List<String>userRoles = new ArrayList<>();
         for(GrantedAuthority grantedAuthority : authUser.getAuthorities())
             userRoles.add(grantedAuthority.getAuthority());

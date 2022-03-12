@@ -40,4 +40,12 @@ public class UserDto implements Serializable {
         this.username = username;
     }
 
+    @Override
+    public String toString() {
+        return "UserDto{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                '}';
+    }
 }

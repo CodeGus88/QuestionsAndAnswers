@@ -3,6 +3,7 @@ package com.questionsandanswers.questionsandanswers.services;
 import com.questionsandanswers.questionsandanswers.exceptions.AdviceController;
 import com.questionsandanswers.questionsandanswers.exceptions.runtime_exception_childs.GeneralException;
 import com.questionsandanswers.questionsandanswers.models.Question;
+import com.questionsandanswers.questionsandanswers.models.dto.QuestionItemDto;
 import com.questionsandanswers.questionsandanswers.repository.QuestionRepository;
 import com.questionsandanswers.questionsandanswers.models.dto.QuestionDto;
 import com.questionsandanswers.questionsandanswers.models.enums.TimeMeasurementsEnum;
@@ -34,8 +35,8 @@ public class QuestionService {
      * @return  questionList
      */
     @Transactional(readOnly = true)
-    public List<QuestionDto> getQuestionList(){
-        return ListConvert.questionToQuestionDto(
+    public List<QuestionItemDto> getQuestionList(){
+        return ListConvert.questionToQuestionItemDto(
                 questionRepository.findAll()
         );
     }
@@ -63,7 +64,6 @@ public class QuestionService {
         Validation.validateWhriteQuestionData(question);
         question.setCreateDate(ZonedDateTime.now());
         try{
-            question.setId(0L);
             return new QuestionDto(
                     questionRepository.save(question)
             );
@@ -102,12 +102,12 @@ public class QuestionService {
     /**
      * Devuelve la lista de preguntas de un usuario
      * @param userId
-     * @return userQuestionList
+     * @return questionItemDtoList
      */
     @Transactional(readOnly = true)
-    public List<QuestionDto> userQuestionList(long userId){
+    public List<QuestionItemDto> userQuestionList(long userId){
         try {
-            return ListConvert.questionToQuestionDto(questionRepository.findByUserId(userId));
+            return ListConvert.questionToQuestionItemDto(questionRepository.findByUserId(userId));
         }catch (Exception e){
             logger.error(e.getMessage());
             throw new GeneralException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -117,17 +117,17 @@ public class QuestionService {
     /**
      * Devuelve la lista de preguntas de un usuario
      * @param days
-     * @return questionDtoList
+     * @return questionItemDtoList
      */
     @Transactional(readOnly = true)
-    public List<QuestionDto> getQuestionListInDays(int  days){
+    public List<QuestionItemDto> getQuestionListInDays(int  days){
         try{
-            List<QuestionDto> questionDtoList = ListConvert.questionToQuestionDto(
+            List<QuestionItemDto> questionItemDtoList = ListConvert.questionToQuestionItemDto(
                     questionRepository.findByCreateDateBetween(
                             ZonedDateTime.now().minusDays(days),
                             ZonedDateTime.now())
             );
-            return questionDtoList;
+            return questionItemDtoList;
         }catch (Exception e){
             logger.error(e.getMessage());
             throw new GeneralException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -140,16 +140,16 @@ public class QuestionService {
      * @return questionDtoList
      */
     @Transactional(readOnly = true)
-    public List<QuestionDto> getQuestionListInDays(String rankOfTime){
+    public List<QuestionItemDto> getQuestionListInDays(String rankOfTime){
         try{
             TimeMeasurementsEnum timeMeasurementsEnum = TimeMeasurementsEnum.valueOf(rankOfTime.toUpperCase());
-            List<QuestionDto> questionDtoList =
-                    ListConvert.questionToQuestionDto(
+            List<QuestionItemDto> questionItemDtoList =
+                    ListConvert.questionToQuestionItemDto(
                             questionRepository.findByCreateDateBetween(
                                 ZonedDateTime.now().minusDays(timeMeasurementsEnum.getDays()),
                                 ZonedDateTime.now())
                     );
-            return questionDtoList;
+            return questionItemDtoList;
         }catch (Exception e){
             logger.error(e.getMessage());
             throw new GeneralException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -162,11 +162,11 @@ public class QuestionService {
      * @return questionList
      */
     @Transactional(readOnly = true)
-    public List<QuestionDto> getQuestionListSearchMatches(String search){
+    public List<QuestionItemDto> getQuestionListSearchMatches(String search){
         try{
-            List<QuestionDto> questionDtoList =
-                    ListConvert.questionToQuestionDto(questionRepository.searchMatches(search));
-            return questionDtoList;
+            List<QuestionItemDto> questionItemDtoList =
+                    ListConvert.questionToQuestionItemDto(questionRepository.searchMatches(search));
+            return questionItemDtoList;
         }catch (Exception e){
             logger.error(e.getMessage());
             throw new GeneralException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

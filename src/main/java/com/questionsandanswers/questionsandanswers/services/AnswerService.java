@@ -4,7 +4,6 @@ import com.questionsandanswers.questionsandanswers.exceptions.AdviceController;
 import com.questionsandanswers.questionsandanswers.exceptions.Validation;
 import com.questionsandanswers.questionsandanswers.exceptions.runtime_exception_childs.GeneralException;
 import com.questionsandanswers.questionsandanswers.models.Answer;
-import com.questionsandanswers.questionsandanswers.models.Question;
 import com.questionsandanswers.questionsandanswers.repository.AnswerRepository;
 import com.questionsandanswers.questionsandanswers.models.dto.AnswerDto;
 import com.questionsandanswers.questionsandanswers.services.tools.ListConvert;
@@ -26,9 +25,8 @@ public class AnswerService {
     private AnswerRepository answerRepository;
     private Logger logger = LoggerFactory.getLogger(AdviceController.class);
 
-
     /**
-     *
+     * Deveuelve las respiestas de una pregunta
      * @param questionId
      * @return answerDtoList
      */
@@ -57,7 +55,6 @@ public class AnswerService {
      * return answerDto
      */
     public AnswerDto saveAnswer(Answer answer) {
-        answer.setId(0L);
         answer.setCreateDate(ZonedDateTime.now());
         Validation.validateWhriteAnswerData(answer);
         AnswerDto answerDto;
@@ -95,6 +92,5 @@ public class AnswerService {
         Validation.notFound(id, answerRepository.existsById(id));
         answerRepository.deleteById(id);
     }
-
 
 }

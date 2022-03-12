@@ -50,6 +50,7 @@ public class AnswerVoteDto implements Serializable {
     }
 
     class VoteResume{
+
         private long id;
         private long userId;
 
@@ -73,5 +74,14 @@ public class AnswerVoteDto implements Serializable {
         public void setUserId(long userId) {
             this.userId = userId;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "AnswerVoteDto{" +
+                "resulOfTheVotes=" + resulOfTheVotes +
+                ", questionId=" + questionId +
+                ", voteResumeList=" + voteResumeList +
+                '}';
     }
 }

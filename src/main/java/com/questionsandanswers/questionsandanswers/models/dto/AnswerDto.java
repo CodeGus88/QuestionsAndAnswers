@@ -60,4 +60,15 @@ public class AnswerDto implements Serializable {
     public void setCreateDate(ZonedDateTime createDate) {
         this.createDate = createDate;
     }
+
+    @Override
+    public String toString() {
+        return "AnswerDto{" +
+                "id=" + id +
+                ", body='" + body + '\'' +
+                ", user=" + user +
+                ", vote=" + vote +
+                ", createDate=" + createDate +
+                '}';
+    }
 }

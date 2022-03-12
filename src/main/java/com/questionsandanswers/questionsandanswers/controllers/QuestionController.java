@@ -3,6 +3,7 @@ package com.questionsandanswers.questionsandanswers.controllers;
 import com.questionsandanswers.questionsandanswers.auth.security.services.UserDetailsServiceImpl;
 import com.questionsandanswers.questionsandanswers.exceptions.Validation;
 import com.questionsandanswers.questionsandanswers.models.Question;
+import com.questionsandanswers.questionsandanswers.models.dto.QuestionItemDto;
 import com.questionsandanswers.questionsandanswers.services.QuestionService;
 import com.questionsandanswers.questionsandanswers.models.dto.QuestionDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +29,8 @@ public class QuestionController {
     private UserDetailsServiceImpl authUser;
 
     @GetMapping
-    public ResponseEntity<List<QuestionDto>> questionList(){
-        ResponseEntity<List<QuestionDto>> responseEntity;
+    public ResponseEntity<List<QuestionItemDto>> questionList(){
+        ResponseEntity<List<QuestionItemDto>> responseEntity;
         responseEntity = ResponseEntity.status(HttpStatus.OK).body(
                 questionService.getQuestionList()
         );
@@ -75,8 +76,8 @@ public class QuestionController {
     }
 
     @GetMapping("user/{userId}")
-    public ResponseEntity<List<QuestionDto>> userQuestionList(@PathVariable long userId){
-        ResponseEntity<List<QuestionDto>> responseEntity;
+    public ResponseEntity<List<QuestionItemDto>> userQuestionList(@PathVariable long userId){
+        ResponseEntity<List<QuestionItemDto>> responseEntity;
         responseEntity = ResponseEntity.status(HttpStatus.OK).body(
                 questionService.userQuestionList(userId)
         );
@@ -84,8 +85,8 @@ public class QuestionController {
     }
 
     @GetMapping("in/{days}")
-    public ResponseEntity<List<QuestionDto>>  userQuestionListInDays(@PathVariable int days){
-        ResponseEntity<List<QuestionDto>> responseEntity;
+    public ResponseEntity<List<QuestionItemDto>>  userQuestionListInDays(@PathVariable int days){
+        ResponseEntity<List<QuestionItemDto>> responseEntity;
         responseEntity = ResponseEntity.status(HttpStatus.OK).body(
                 questionService.getQuestionListInDays(days)
         );
@@ -93,16 +94,16 @@ public class QuestionController {
     }
 
     @GetMapping("latest/{rankOfTime}")
-    public ResponseEntity<List<QuestionDto>> userLatestQuestionList(@PathVariable String rankOfTime){
-        ResponseEntity<List<QuestionDto>> responseEntity;
+    public ResponseEntity<List<QuestionItemDto>> userLatestQuestionList(@PathVariable String rankOfTime){
+        ResponseEntity<List<QuestionItemDto>> responseEntity;
         responseEntity = ResponseEntity.status(HttpStatus.OK).body(
                 questionService.getQuestionListInDays(rankOfTime)
         );
         return responseEntity;
     }
     @GetMapping("search/{search}")
-    public ResponseEntity<List<QuestionDto>>  search(@PathVariable String search){
-        ResponseEntity<List<QuestionDto>> responseEntity;
+    public ResponseEntity<List<QuestionItemDto>>  search(@PathVariable String search){
+        ResponseEntity<List<QuestionItemDto>> responseEntity;
         responseEntity = ResponseEntity.status(HttpStatus.OK).body(
                 questionService.getQuestionListSearchMatches(search)
         );

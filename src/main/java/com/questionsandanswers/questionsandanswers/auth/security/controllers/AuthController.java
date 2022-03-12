@@ -5,14 +5,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
 
-import com.questionsandanswers.questionsandanswers.auth.payload.request.SignupAuthorRequest;
 import com.questionsandanswers.questionsandanswers.auth.security.services.UserDetailsServiceImpl;
 import com.questionsandanswers.questionsandanswers.exceptions.Validation;
 import com.questionsandanswers.questionsandanswers.models.Role;
 import com.questionsandanswers.questionsandanswers.models.User;
 import com.questionsandanswers.questionsandanswers.models.enums.ERole;
 import com.questionsandanswers.questionsandanswers.repository.RoleRepository;
-import com.questionsandanswers.questionsandanswers.repository.UserRepository;
 import com.questionsandanswers.questionsandanswers.auth.payload.request.LoginRequest;
 import com.questionsandanswers.questionsandanswers.auth.payload.request.SignupRequest;
 import com.questionsandanswers.questionsandanswers.auth.payload.response.MessageResponse;
@@ -39,8 +37,6 @@ public class AuthController {
     @Autowired
     AuthenticationManager authenticationManager;
     @Autowired
-    UserRepository userRepository;
-    @Autowired
     UserService userService;
     @Autowired
     RoleRepository roleRepository;
@@ -49,7 +45,7 @@ public class AuthController {
     @Autowired
     JwtUtils jwtUtils;
     @Autowired
-    private UserDetailsServiceImpl authUser;
+    UserDetailsServiceImpl authUser;
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
@@ -89,8 +85,9 @@ public class AuthController {
     }
 
     @PostMapping("/update-user/{id}")
-    @PreAuthorize("hasRole('ADMIN'))")
-    public ResponseEntity<?> updateUser(@Valid @RequestBody SignupRequest signUpRequest, @PathVariable(name = "id") long id) {
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    public ResponseEntity<?> updateUser(@PathVariable long id, @RequestBody SignupRequest signUpRequest) {
+        check(id);
         User user = buidUser(signUpRequest);
         user.setId(id);
         check(id);
@@ -98,21 +95,11 @@ public class AuthController {
         return ResponseEntity.ok(new MessageResponse("User updated successfully!"));
     }
 
-    @PostMapping("/update-user-author")
-    @PreAuthorize("hasRole('ADMIN'))")
-    public ResponseEntity<?> updateUser(@Valid @RequestBody SignupAuthorRequest signupAuthorRequest) {
-        User user = new User();
-        user.setId(signupAuthorRequest.getId());
-        user.setUsername(signupAuthorRequest.getUsername());
-        user.setEmail(signupAuthorRequest.getEmail());
-        user.setPassword(signupAuthorRequest.getPassword());
-        check(user.getId());
-        userService.updateUser(user);
-        return ResponseEntity.ok(new MessageResponse("User updated successfully!"));
-    }
-
-
-
+    /**
+     * Verifica que sea el autor del registro antes de editar o eliminar
+     * @param signUpRequest
+     * @return user
+     */
     private User buidUser(SignupRequest signUpRequest){
         // Create new user's account
         User user = new User(signUpRequest.getUsername(),
