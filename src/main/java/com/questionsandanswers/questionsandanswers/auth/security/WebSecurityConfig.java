@@ -60,4 +60,3 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.headers().frameOptions().disable();
     }
 }
-//.antMatchers("/api/auth/**").permitAll()

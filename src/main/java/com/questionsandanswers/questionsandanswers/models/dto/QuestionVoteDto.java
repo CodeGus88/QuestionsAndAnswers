@@ -72,5 +72,22 @@ public class QuestionVoteDto implements Serializable {
         public void setUserId(long userId) {
             this.userId = userId;
         }
+
+        @Override
+        public String toString() {
+            return "VoteResume{" +
+                    "id=" + id +
+                    ", userId=" + userId +
+                    '}';
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "QuestionVoteDto{" +
+                "resulOfTheVotes=" + resulOfTheVotes +
+                ", questionId=" + questionId +
+                ", voteResumeList=" + voteResumeList +
+                '}';
     }
 }

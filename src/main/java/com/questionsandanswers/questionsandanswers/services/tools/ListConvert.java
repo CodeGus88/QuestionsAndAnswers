@@ -5,6 +5,7 @@ import com.questionsandanswers.questionsandanswers.models.Question;
 import com.questionsandanswers.questionsandanswers.models.User;
 import com.questionsandanswers.questionsandanswers.models.dto.AnswerDto;
 import com.questionsandanswers.questionsandanswers.models.dto.QuestionDto;
+import com.questionsandanswers.questionsandanswers.models.dto.QuestionItemDto;
 import com.questionsandanswers.questionsandanswers.models.dto.UserDto;
 
 import java.util.ArrayList;
@@ -36,6 +37,19 @@ public class ListConvert {
                 questionDtoList.add(new QuestionDto(q));
             }
             return questionDtoList;
+    }
+
+    /**
+     * Convierte la lista Question a QuestionDto
+     * @param questionList
+     * @return  questionDtoList
+     */
+    public static List<QuestionItemDto> questionToQuestionItemDto(List<Question> questionList){
+        List<QuestionItemDto> questionItemDtoList = new ArrayList<>();
+        for(Question q : questionList){
+            questionItemDtoList.add(new QuestionItemDto(q));
+        }
+        return questionItemDtoList;
     }
 
     /**

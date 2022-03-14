@@ -102,4 +102,18 @@ public class QuestionDto implements Serializable {
     public void setAnswerList(List<AnswerDto> answerList) {
         this.answerList = answerList;
     }
+
+    @Override
+    public String toString() {
+        return "QuestionDto{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", body='" + body + '\'' +
+                ", tags='" + tags + '\'' +
+                ", createDate=" + createDate +
+                ", user=" + user +
+                ", vote=" + vote +
+                ", answerList=" + answerList +
+                '}';
+    }
 }

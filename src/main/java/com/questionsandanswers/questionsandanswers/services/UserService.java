@@ -50,7 +50,6 @@ public class UserService {
      * return userDto
      */
     public UserDto saveUser(User user) {
-        user.setId(0L);
         Validation.validateWhriteUserData(user, userRepository.findByEmail(user.getEmail()), true);
         try{
             return new UserDto(userRepository.save(user));
