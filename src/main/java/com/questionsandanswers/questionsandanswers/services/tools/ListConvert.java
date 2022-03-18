@@ -9,7 +9,9 @@ import com.questionsandanswers.questionsandanswers.models.dto.QuestionItemDto;
 import com.questionsandanswers.questionsandanswers.models.dto.UserDto;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ListConvert {
 
@@ -49,6 +51,8 @@ public class ListConvert {
         for(Question q : questionList){
             questionItemDtoList.add(new QuestionItemDto(q));
         }
+        Collections.sort(questionItemDtoList, (o1, o2)->o1.getPunctuation() - o2.getPunctuation());
+        Collections.reverse(questionItemDtoList);
         return questionItemDtoList;
     }
 

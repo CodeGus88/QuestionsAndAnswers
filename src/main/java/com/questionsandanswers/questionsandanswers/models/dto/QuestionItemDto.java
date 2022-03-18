@@ -14,14 +14,17 @@ public class QuestionItemDto implements Serializable {
 
     private String tags;
 
+    private int punctuation;
+
     public QuestionItemDto() {
     }
 
-    public QuestionItemDto(Long id, String title, String body, String tags) {
+    public QuestionItemDto(Long id, String title, String body, String tags, int punctuation) {
         this.id = id;
         this.title = title;
         this.body = body;
         this.tags = tags;
+        this.punctuation = punctuation;
     }
 
     public QuestionItemDto(Question question) {
@@ -29,6 +32,7 @@ public class QuestionItemDto implements Serializable {
         this.title = question.getTitle();
         this.body = question.getBody();
         this.tags = question.getTags();
+        this.punctuation = question.getVoteList().size();
     }
 
     public Long getId() {
@@ -63,6 +67,14 @@ public class QuestionItemDto implements Serializable {
         this.tags = tags;
     }
 
+    public int getPunctuation() {
+        return punctuation;
+    }
+
+    public void setPunctuation(int punctuation) {
+        this.punctuation = punctuation;
+    }
+
     @Override
     public String toString() {
         return "QuestionItemDto{" +
@@ -70,6 +82,7 @@ public class QuestionItemDto implements Serializable {
                 ", title='" + title + '\'' +
                 ", body='" + body + '\'' +
                 ", tags='" + tags + '\'' +
+                ", punctuation=" + punctuation +
                 '}';
     }
 }
