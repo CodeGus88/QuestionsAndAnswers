@@ -1,5 +1,8 @@
 package com.questionsandanswers.questionsandanswers.models;
 
+import com.questionsandanswers.questionsandanswers.models.requests.answers.AnswerRequest;
+import com.questionsandanswers.questionsandanswers.models.requests.answers.AnswerUpdateRequest;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
@@ -35,6 +38,20 @@ public class Answer implements Serializable {
 
     public Answer(){
         answerVoteList = new ArrayList<>();
+    }
+
+    public Answer(AnswerRequest answerRequest, long userId){
+        body = answerRequest.getBody();
+        question = new Question();
+        question.setId(answerRequest.getQuestionId());
+        createDate = ZonedDateTime.now();
+        user = new User();
+        user.setId(userId);
+    }
+
+    public Answer(AnswerUpdateRequest answerUpdateRequest){
+        id = answerUpdateRequest.getId();
+        body = answerUpdateRequest.getBody();
     }
 
     public long getId() {

@@ -2,13 +2,12 @@ package com.questionsandanswers.questionsandanswers.exceptions;
 
 import com.questionsandanswers.questionsandanswers.auth.security.services.UserDetailsImpl;
 import com.questionsandanswers.questionsandanswers.exceptions.runtime_exception_childs.ValidationException;
-import com.questionsandanswers.questionsandanswers.models.Answer;
-import com.questionsandanswers.questionsandanswers.models.Question;
 import com.questionsandanswers.questionsandanswers.models.User;
 import com.questionsandanswers.questionsandanswers.models.enums.ERole;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.GrantedAuthority;
-
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,66 +24,74 @@ public class Validation {
     }
 
     /**
+     * Genera Evalua si existen errores en los request
+     * @param result
+     */
+    public static void generalValidations(BindingResult result){
+        if(result.hasErrors()) {
+            ErrorModel error = new ErrorModel();
+            for (FieldError fieldError: result.getFieldErrors())
+                error.putError(fieldError.getField() + ": " + fieldError.getDefaultMessage());
+            throw new ValidationException(
+                    "BAD REQUEST",
+                    error,
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+    }
+
+//    /**
+//     * Evalua los datos de entrada para editar y crear usuario
+//     * @param user
+//     * @param emailWithMatches
+//     * @param IS_NEW_USER
+//     */
+//    public static void validateWhriteUserData(User user, List<User> emailWithMatches, boolean IS_NEW_USER){
+//        ErrorModel error = new ErrorModel();
+//
+//        if(user.getUsername().equals("anonymousUser"))
+//            error.putError("Username ''"+ user.getUsername() +"'' is invalid!");
+//
+//        if(user.getUsername().isEmpty())
+//            error.putError("Username is required!");
+//
+//        if(user.getEmail().isEmpty())
+//            error.putError("Email is required!");
+//        else if(!Tools.isEmail(user.getEmail()))
+//            error.putError("Email is invalid!");
+//        else if(!emailWithMatches.isEmpty()){
+//            if(IS_NEW_USER)
+//                error.putError("Email already exists!");
+//            else if(emailWithMatches.get(0).getId() != user.getId())
+//                error.putError("Email already exists!");
+//        }
+//
+//        if(user.getPassword().isEmpty())
+//            error.putError("Password is required!");
+//
+//        if(!error.getErrors().isEmpty())
+//            throw new ValidationException("ERROR IN THE FORM", error, HttpStatus.BAD_REQUEST);
+//    }
+
+    /**
      * Evalua los datos de entrada para editar y crear usuario
      * @param user
-     * @param emailWithMatches
-     * @param IS_NEW_USER
+     * @param usernameExist
+     * @param emailExist
      */
-    public static void validateWhriteUserData(User user, List<User> emailWithMatches, boolean IS_NEW_USER){
+    public static void validateWhriteUserData(User user, boolean usernameExist, boolean emailExist){
         ErrorModel error = new ErrorModel();
 
         if(user.getUsername().equals("anonymousUser"))
-            error.putError("Username ''"+ user.getUsername() +"'' is invalid!");
+            error.putError("Username: ''"+ user.getUsername() +"'' is invalid!");
 
-        if(user.getUsername().isEmpty())
-            error.putError("Username is required!");
+        if(usernameExist)
+            error.putError("Username: already exist!");
 
-        if(user.getEmail().isEmpty())
-            error.putError("Email is required!");
-        else if(!Tools.isEmail(user.getEmail()))
-            error.putError("Email is invalid!");
-        else if(!emailWithMatches.isEmpty()){
-            if(IS_NEW_USER)
-                error.putError("Email already exists!");
-            else if(emailWithMatches.get(0).getId() != user.getId())
-                error.putError("Email already exists!");
-        }
-
-        if(user.getPassword().isEmpty())
-            error.putError("Password is required!");
-
-        if(!error.getErrors().isEmpty())
-            throw new ValidationException("ERROR IN THE FORM", error, HttpStatus.BAD_REQUEST);
-    }
-
-    /**
-     * Evalua los datos de entrada para editar y crear pregunta
-     * @param question
-     */
-    public static void validateWhriteQuestionData(Question question){
-        ErrorModel error = new ErrorModel();
-        if(question.getTitle().isEmpty())
-            error.putError("Title is required!");
-
-        if(question.getBody().isEmpty())
-            error.putError("Body is required!");
-
-        if(question.getTags().isEmpty())
-            error.putError("Tags is required!");
-
-        if(!error.getErrors().isEmpty())
-            throw new ValidationException("ERROR IN THE FORM", error, HttpStatus.BAD_REQUEST);
-    }
-
-
-    /**
-     * Evalua los datos de entrada para editar y crear respuesta
-     * @param answer
-     */
-    public static void validateWhriteAnswerData(Answer answer){
-        ErrorModel error = new ErrorModel();
-        if(answer.getBody().isEmpty())
-            error.putError("Body is required");
+        if(!Tools.isEmail(user.getEmail()))
+            error.putError("Email: is invalid!");
+        else if(emailExist)
+                error.putError("Email: already exists!");
 
         if(!error.getErrors().isEmpty())
             throw new ValidationException("ERROR IN THE FORM", error, HttpStatus.BAD_REQUEST);
@@ -108,19 +115,25 @@ public class Validation {
     /**
      * Verifica si es el autor del registro
      * @param authUser
-     * @param oldQuestionId
+     * @param authorId
      */
-    public static void validateAuthor(UserDetailsImpl authUser, long oldQuestionId){
+    public static void validateAuthor(UserDetailsImpl authUser, long authorId){
         ErrorModel error = new ErrorModel();
         List<String>userRoles = new ArrayList<>();
         for(GrantedAuthority grantedAuthority : authUser.getAuthorities())
             userRoles.add(grantedAuthority.getAuthority());
-
-        if((authUser.getId() != oldQuestionId) && !userRoles.contains(ERole.ROLE_ADMIN.name())){
+        if((authUser.getId() != authorId) && !userRoles.contains(ERole.ROLE_ADMIN.name())){
             error.putError("You do not have permissions");
         }
 
         if(!error.getErrors().isEmpty())
             throw new ValidationException("NOT ALLOWED", error, HttpStatus.UNAUTHORIZED);
+    }
+
+    public static boolean existRole(UserDetailsImpl authUser, ERole eRole){
+        List<String>userRoles = new ArrayList<>();
+        for(GrantedAuthority grantedAuthority : authUser.getAuthorities())
+            userRoles.add(grantedAuthority.getAuthority());
+        return userRoles.contains(eRole.name());
     }
 }

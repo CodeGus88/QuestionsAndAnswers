@@ -4,8 +4,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
-
-import com.questionsandanswers.questionsandanswers.auth.security.services.UserDetailsServiceImpl;
+import com.questionsandanswers.questionsandanswers.controllers.MainClassController;
 import com.questionsandanswers.questionsandanswers.exceptions.Validation;
 import com.questionsandanswers.questionsandanswers.models.Role;
 import com.questionsandanswers.questionsandanswers.models.User;
@@ -28,12 +27,13 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/auth")
-public class AuthController {
+public class AuthController extends MainClassController {
     @Autowired
     AuthenticationManager authenticationManager;
     @Autowired
@@ -44,11 +44,10 @@ public class AuthController {
     PasswordEncoder encoder;
     @Autowired
     JwtUtils jwtUtils;
-    @Autowired
-    UserDetailsServiceImpl authUser;
 
     @PostMapping("/signin")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest, BindingResult result) {
+        Validation.generalValidations(result);
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -64,7 +63,8 @@ public class AuthController {
                         roles));
     }
     @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
+    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest, BindingResult result) {
+        Validation.generalValidations(result);
         signUpRequest.getRole().clear();
         signUpRequest.getRole().add("user");
         userService.saveUser(buidUser(signUpRequest));
@@ -84,14 +84,14 @@ public class AuthController {
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
 
-    @PostMapping("/update-user/{id}")
+    @PutMapping("/update/{id}")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseEntity<?> updateUser(@PathVariable long id, @RequestBody SignupRequest signUpRequest) {
-        check(id);
+    public ResponseEntity<?> updateUser(@PathVariable long id, @RequestBody SignupRequest signUpRequest, BindingResult result) {
+        Validation.generalValidations(result);
         User user = buidUser(signUpRequest);
         user.setId(id);
         check(id);
-        userService.updateUser(user);
+        userService.updateUser(user, Validation.existRole(getUserDetailsImp(), ERole.ROLE_ADMIN));
         return ResponseEntity.ok(new MessageResponse("User updated successfully!"));
     }
 
@@ -138,9 +138,8 @@ public class AuthController {
      */
     private void check(long userId){
         Validation.validateAuthor(
-                authUser.loadUserByUsernameInfo(SecurityContextHolder.getContext().getAuthentication().getName()),
+                getUserDetailsImp(),
                 userId
         );
     }
-
 }

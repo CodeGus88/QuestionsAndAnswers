@@ -23,6 +23,15 @@ public class AnswerVote implements Serializable {
     @JoinColumn(name = "answer_id", referencedColumnName = "id", nullable = false, updatable = false)
     private Answer answer;
 
+    public AnswerVote(){}
+
+    public AnswerVote(long answerId, long userId){
+        answer = new Answer();
+        answer.setId(answerId);
+        user  = new User();
+        user.setId(userId);
+    }
+
     public Long getId() {
         return id;
     }

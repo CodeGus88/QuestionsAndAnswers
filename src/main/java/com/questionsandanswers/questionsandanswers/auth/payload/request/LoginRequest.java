@@ -3,6 +3,7 @@ package com.questionsandanswers.questionsandanswers.auth.payload.request;
 import javax.validation.constraints.NotBlank;
 
 public class LoginRequest {
+
     @NotBlank
     private String username;
 

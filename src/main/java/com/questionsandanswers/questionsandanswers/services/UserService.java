@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -50,7 +52,11 @@ public class UserService {
      * return userDto
      */
     public UserDto saveUser(User user) {
-        Validation.validateWhriteUserData(user, userRepository.findByEmail(user.getEmail()), true);
+        Validation.validateWhriteUserData(
+                user,
+                userRepository.existsByUsername(user.getUsername()),
+                userRepository.existsByEmail(user.getEmail())
+        );
         try{
             return new UserDto(userRepository.save(user));
         }catch (Exception e){
@@ -63,10 +69,15 @@ public class UserService {
      * Actualiza un usuario
      * @param user
      */
-    public UserDto updateUser(User user) {
-
+    public UserDto updateUser(User user, boolean isAdmin) {
         Validation.notFound(user.getId(), userRepository.existsById(user.getId()));
-        Validation.validateWhriteUserData(user, userRepository.findByEmail(user.getEmail()), false);
+        Validation.validateWhriteUserData(
+                user,
+                userRepository.existsByUsernameNotIncludingId(user.getId(), user.getUsername()),
+                userRepository.existsByEmailNotIncludingById(user.getId(), user.getEmail())
+        );
+        if(!isAdmin)
+            user.setRoles(userRepository.findById(user.getId()).get().getRoles());
         try{
             return new UserDto(userRepository.save(user));
         }catch (Exception e){

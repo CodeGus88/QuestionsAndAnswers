@@ -4,8 +4,11 @@ import com.questionsandanswers.questionsandanswers.exceptions.AdviceController;
 import com.questionsandanswers.questionsandanswers.exceptions.Validation;
 import com.questionsandanswers.questionsandanswers.exceptions.runtime_exception_childs.GeneralException;
 import com.questionsandanswers.questionsandanswers.models.Answer;
+import com.questionsandanswers.questionsandanswers.models.requests.answers.AnswerRequest;
+import com.questionsandanswers.questionsandanswers.models.requests.answers.AnswerUpdateRequest;
 import com.questionsandanswers.questionsandanswers.repository.AnswerRepository;
 import com.questionsandanswers.questionsandanswers.models.dto.AnswerDto;
+import com.questionsandanswers.questionsandanswers.repository.QuestionRepository;
 import com.questionsandanswers.questionsandanswers.services.tools.ListConvert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -23,10 +25,14 @@ public class AnswerService {
 
     @Autowired
     private AnswerRepository answerRepository;
+
+    @Autowired
+    private QuestionRepository questionRepository;
+
     private Logger logger = LoggerFactory.getLogger(AdviceController.class);
 
     /**
-     * Deveuelve las respiestas de una pregunta
+     * Deveuelve las respuestas de una pregunta
      * @param questionId
      * @return answerDtoList
      */
@@ -52,36 +58,33 @@ public class AnswerService {
     /**
      * Crea una nueva respuesta
      * @param answer
-     * return answerDto
+     * return answerRequest
      */
-    public AnswerDto saveAnswer(Answer answer) {
+    public AnswerRequest saveAnswer(Answer answer) {
+        Validation.notFound(answer.getQuestion().getId(),
+                questionRepository.existsById(answer.getQuestion().getId())
+        );
         answer.setCreateDate(ZonedDateTime.now());
-        Validation.validateWhriteAnswerData(answer);
-        AnswerDto answerDto;
         try{
-            answerDto = new AnswerDto(answerRepository.save(answer));
+            return new AnswerRequest(answerRepository.save(answer));
         }catch (Exception e){
             logger.error(e.getMessage());
             throw new GeneralException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return answerDto;
     }
 
     /**
      * Actualiza una respuesta
      * @param answer
      */
-    public AnswerDto updateAnswer(Answer answer) {
+    public AnswerUpdateRequest updateAnswer(Answer answer) {
         Validation.notFound(answer.getId(), answerRepository.existsById(answer.getId()));
-        Validation.validateWhriteAnswerData(answer);
-        AnswerDto answerDto;
         try{
-            answerDto = new AnswerDto(answerRepository.save(answer));
+            return new AnswerUpdateRequest(answerRepository.save(answer));
         }catch (Exception e){
             logger.error(e.getMessage());
             throw new GeneralException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return answerDto;
     }
 
     /**

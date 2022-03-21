@@ -3,6 +3,7 @@ package com.questionsandanswers.questionsandanswers.models.dto;
 import com.questionsandanswers.questionsandanswers.models.Question;
 
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 
 public class QuestionItemDto implements Serializable {
 
@@ -14,17 +15,11 @@ public class QuestionItemDto implements Serializable {
 
     private String tags;
 
+    private ZonedDateTime createDate;
+
     private int punctuation;
 
     public QuestionItemDto() {
-    }
-
-    public QuestionItemDto(Long id, String title, String body, String tags, int punctuation) {
-        this.id = id;
-        this.title = title;
-        this.body = body;
-        this.tags = tags;
-        this.punctuation = punctuation;
     }
 
     public QuestionItemDto(Question question) {
@@ -32,6 +27,7 @@ public class QuestionItemDto implements Serializable {
         this.title = question.getTitle();
         this.body = question.getBody();
         this.tags = question.getTags();
+        this.createDate = question.getCreateDate();
         this.punctuation = question.getVoteList().size();
     }
 
@@ -67,6 +63,14 @@ public class QuestionItemDto implements Serializable {
         this.tags = tags;
     }
 
+    public ZonedDateTime getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(ZonedDateTime createDate) {
+        this.createDate = createDate;
+    }
+
     public int getPunctuation() {
         return punctuation;
     }
@@ -82,6 +86,7 @@ public class QuestionItemDto implements Serializable {
                 ", title='" + title + '\'' +
                 ", body='" + body + '\'' +
                 ", tags='" + tags + '\'' +
+                ", createDate=" + createDate +
                 ", punctuation=" + punctuation +
                 '}';
     }

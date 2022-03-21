@@ -1,5 +1,6 @@
 package com.questionsandanswers.questionsandanswers.auth.payload.request;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.validation.constraints.*;
@@ -11,7 +12,8 @@ public class SignupRequest {
     private String username;
 
     @NotBlank
-    @Size(max = 50)
+    @Max(value = 50)
+    @Min(value = 4)
     @Email
     private String email;
 
@@ -20,6 +22,10 @@ public class SignupRequest {
     @NotBlank
     @Size(min = 6, max = 40)
     private String password;
+
+    public SignupRequest(){
+        role = new HashSet<String>();
+    }
 
     public String getUsername() {
         return username;

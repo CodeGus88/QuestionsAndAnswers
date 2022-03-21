@@ -3,7 +3,6 @@ package com.questionsandanswers.questionsandanswers.auth.security.jwt;
 import java.util.Date;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-
 import com.questionsandanswers.questionsandanswers.auth.security.services.UserDetailsImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,13 +14,10 @@ import io.jsonwebtoken.*;
 @Component
 public class JwtUtils {
     private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
-//    @Value("${bezkoder.app.jwtSecret}")
     @Value("${askme.app.jwtSecret}")
     private String jwtSecret;
-//    @Value("${bezkoder.app.jwtExpirationMs}")
     @Value("${askme.app.jwtExpirationMs}")
     private int jwtExpirationMs;
-//    @Value("${bezkoder.app.jwtCookieName}")
     @Value("${askme.app.jwtCookieName}")
     private String jwtCookie;
     public String getJwtFromCookies(HttpServletRequest request) {

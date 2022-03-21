@@ -4,6 +4,8 @@ import com.questionsandanswers.questionsandanswers.exceptions.AdviceController;
 import com.questionsandanswers.questionsandanswers.exceptions.runtime_exception_childs.GeneralException;
 import com.questionsandanswers.questionsandanswers.models.Question;
 import com.questionsandanswers.questionsandanswers.models.dto.QuestionItemDto;
+import com.questionsandanswers.questionsandanswers.models.requests.questions.QuestionRequest;
+import com.questionsandanswers.questionsandanswers.models.requests.questions.QuestionUpdateRequest;
 import com.questionsandanswers.questionsandanswers.repository.QuestionRepository;
 import com.questionsandanswers.questionsandanswers.models.dto.QuestionDto;
 import com.questionsandanswers.questionsandanswers.models.enums.TimeMeasurementsEnum;
@@ -60,11 +62,9 @@ public class QuestionService {
      * @param question
      * @return saveQuestion
      */
-    public QuestionDto saveQuestion(Question question){
-        Validation.validateWhriteQuestionData(question);
-        question.setCreateDate(ZonedDateTime.now());
+    public QuestionRequest saveQuestion(Question question){
         try{
-            return new QuestionDto(
+            return new QuestionRequest(
                     questionRepository.save(question)
             );
         }catch (Exception e){
@@ -78,12 +78,10 @@ public class QuestionService {
      * @param question
      * @return updateQuestion
      */
-    public QuestionDto updateQuestion(Question question){
+    public QuestionUpdateRequest updateQuestion(Question question){
         Validation.notFound(question.getId(), questionRepository.existsById(question.getId()));
-        Validation.validateWhriteQuestionData(question);
         try{
-            QuestionDto questionDto = new QuestionDto(questionRepository.save(question));
-            return new QuestionDto(questionRepository.save(question));
+            return new QuestionUpdateRequest(questionRepository.save(question));
         }catch (Exception e){
             logger.error(e.getMessage());
             throw new GeneralException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

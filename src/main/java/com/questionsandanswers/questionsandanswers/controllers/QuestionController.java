@@ -1,18 +1,25 @@
 package com.questionsandanswers.questionsandanswers.controllers;
 
-import com.questionsandanswers.questionsandanswers.auth.security.services.UserDetailsServiceImpl;
 import com.questionsandanswers.questionsandanswers.exceptions.Validation;
+import com.questionsandanswers.questionsandanswers.exceptions.runtime_exception_childs.GeneralException;
 import com.questionsandanswers.questionsandanswers.models.Question;
 import com.questionsandanswers.questionsandanswers.models.dto.QuestionItemDto;
+import com.questionsandanswers.questionsandanswers.models.requests.questions.QuestionRequest;
+import com.questionsandanswers.questionsandanswers.models.requests.questions.QuestionUpdateRequest;
 import com.questionsandanswers.questionsandanswers.services.QuestionService;
 import com.questionsandanswers.questionsandanswers.models.dto.QuestionDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Controlador para la entidad Question (preguntas)
@@ -20,13 +27,10 @@ import java.util.List;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/questions")
-public class QuestionController {
+public class QuestionController extends MainClassController{
 
     @Autowired
     private QuestionService questionService;
-
-    @Autowired
-    private UserDetailsServiceImpl authUser;
 
     @GetMapping
     public ResponseEntity<List<QuestionItemDto>> questionList(){
@@ -48,24 +52,19 @@ public class QuestionController {
 
     @PostMapping("create")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseEntity<QuestionDto> create(@RequestBody Question question){
-        question.getUser().setId(authUser.loadUserByUsernameInfo(SecurityContextHolder.getContext().getAuthentication().getName()).getId());
-        ResponseEntity<QuestionDto> responseEntity;
-        responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(
-                questionService.saveQuestion(question)
-        );
-        return responseEntity;
+    public ResponseEntity<QuestionRequest> create(@RequestBody @Validated QuestionRequest qr, BindingResult result){
+        Validation.generalValidations(result);
+        Question question = new Question(qr, getUserDetailsImp().getId());
+        return ResponseEntity.ok().body(questionService.saveQuestion(question));
     }
 
     @PutMapping("update")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<QuestionDto> update(@RequestBody Question question){
-        check(question.getId());
-        ResponseEntity<QuestionDto> responseEntity;
-        responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(
-                questionService.updateQuestion(question)
-        );
-        return responseEntity;
+    public ResponseEntity<QuestionUpdateRequest> update(@Valid @RequestBody QuestionUpdateRequest qur, BindingResult result){
+        Validation.generalValidations(result);
+        check(qur.getId());
+        Question question = new Question(qur);
+        return ResponseEntity.ok().body(questionService.updateQuestion(question));
     }
 
     @DeleteMapping("delete/{id}")
@@ -112,12 +111,12 @@ public class QuestionController {
 
     /**
      * Verifica que sea el autor del registro antes de editar o eliminar
-     * @param questionId
+     * @param entityId
      */
-    private void check(long questionId){
+    private void check(long entityId){
         Validation.validateAuthor(
-                authUser.loadUserByUsernameInfo(SecurityContextHolder.getContext().getAuthentication().getName()),
-                questionService.getQuestion(questionId).getId()
+                getUserDetailsImp(),
+                questionService.getQuestion(entityId).getUser().getId()
         );
     }
 

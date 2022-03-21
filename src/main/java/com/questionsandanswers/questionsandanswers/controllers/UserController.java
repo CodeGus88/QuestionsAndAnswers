@@ -1,5 +1,6 @@
 package com.questionsandanswers.questionsandanswers.controllers;
 
+import com.questionsandanswers.questionsandanswers.exceptions.Validation;
 import com.questionsandanswers.questionsandanswers.models.dto.UserDto;
 import com.questionsandanswers.questionsandanswers.models.User;
 import com.questionsandanswers.questionsandanswers.services.UserService;
@@ -18,7 +19,7 @@ import java.util.List;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("api/users")
-public class UserController {
+public class UserController extends MainClassController{
 
     @Autowired
     private UserService userService;
@@ -46,22 +47,20 @@ public class UserController {
         return responseEntity;
     }
 
-    @PutMapping("update")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<UserDto> update(@RequestBody User user){
-
-        ResponseEntity<UserDto> responseEntity;
-        responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(
-                userService.updateUser(user)
-        );
-        return responseEntity;
-    }
-
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("delete/{id}")
     public void delete(@PathVariable long id){
         userService.deleteUser(id);
     }
 
-
+    /**
+     * Verifica que sea el autor del registro antes de editar o eliminar
+     * @param userId
+     */
+    private void check(long userId){
+        Validation.validateAuthor(
+                getUserDetailsImp(),
+                userId
+        );
+    }
 }

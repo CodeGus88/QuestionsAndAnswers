@@ -1,28 +1,28 @@
 package com.questionsandanswers.questionsandanswers.controllers;
 
-import com.questionsandanswers.questionsandanswers.auth.security.services.UserDetailsServiceImpl;
 import com.questionsandanswers.questionsandanswers.exceptions.Validation;
 import com.questionsandanswers.questionsandanswers.models.Answer;
+import com.questionsandanswers.questionsandanswers.models.requests.answers.AnswerRequest;
+import com.questionsandanswers.questionsandanswers.models.requests.answers.AnswerUpdateRequest;
 import com.questionsandanswers.questionsandanswers.services.AnswerService;
 import com.questionsandanswers.questionsandanswers.models.dto.AnswerDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 import java.util.List;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("api/answers")
-public class AnswerController {
+public class AnswerController extends MainClassController{
 
     @Autowired
     private AnswerService answerService;
-
-    @Autowired
-    private UserDetailsServiceImpl authUser;
 
     @GetMapping("question/{questionId}")
     public ResponseEntity<List<AnswerDto>> findByQuestionId(@PathVariable long questionId){
@@ -35,23 +35,19 @@ public class AnswerController {
 
     @PostMapping("create")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseEntity<AnswerDto> create(@RequestBody Answer answer){
-        ResponseEntity<AnswerDto> responseEntity;
-        responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(
-                answerService.saveAnswer(answer)
-        );
-        return responseEntity;
+    public ResponseEntity<AnswerRequest> create(@Valid @RequestBody AnswerRequest ar, BindingResult result){
+       Validation.generalValidations(result);
+        Answer answer = new Answer(ar, getUserDetailsImp().getId());
+       return ResponseEntity.ok().body(answerService.saveAnswer(answer));
     }
 
     @PutMapping("update")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseEntity<AnswerDto> update(@RequestBody Answer answer){
-        check(answer.getId());
-        ResponseEntity<AnswerDto> responseEntity;
-        responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(
-                answerService.updateAnswer(answer)
-        );
-        return responseEntity;
+    public ResponseEntity<AnswerUpdateRequest> update(@Valid @RequestBody AnswerUpdateRequest aur, BindingResult result){
+        Validation.generalValidations(result);
+        check(aur.getId());
+        Answer answer = new Answer(aur);
+        return ResponseEntity.ok().body(answerService.updateAnswer(answer));
     }
 
     @DeleteMapping("delete/{id}")
@@ -67,8 +63,8 @@ public class AnswerController {
      */
     private void check(long answerId){
         Validation.validateAuthor(
-                authUser.loadUserByUsernameInfo(SecurityContextHolder.getContext().getAuthentication().getName()),
-                answerService.getAnswer(answerId).getId()
+                getUserDetailsImp(),
+                answerService.getAnswer(answerId).getUser().getId()
         );
     }
 
