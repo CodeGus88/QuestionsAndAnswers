@@ -1,14 +1,15 @@
 package com.questionsandanswers.questionsandanswers.models.requests.answers;
 
 import com.questionsandanswers.questionsandanswers.models.Answer;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-@Data
+/**
+ * Formulario para crear unna respuesta
+ */
 @NoArgsConstructor
 public class AnswerRequest {
 

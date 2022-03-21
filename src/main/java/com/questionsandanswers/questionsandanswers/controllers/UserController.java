@@ -2,7 +2,6 @@ package com.questionsandanswers.questionsandanswers.controllers;
 
 import com.questionsandanswers.questionsandanswers.exceptions.Validation;
 import com.questionsandanswers.questionsandanswers.models.dto.UserDto;
-import com.questionsandanswers.questionsandanswers.models.User;
 import com.questionsandanswers.questionsandanswers.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

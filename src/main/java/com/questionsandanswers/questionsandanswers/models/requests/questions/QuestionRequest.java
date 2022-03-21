@@ -1,11 +1,12 @@
 package com.questionsandanswers.questionsandanswers.models.requests.questions;
 
 import com.questionsandanswers.questionsandanswers.models.Question;
-import lombok.Data;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
-@Data
+/**
+ * Formulario para crear una pregunta
+ */
 public class QuestionRequest implements Serializable {
 
     @NotBlank

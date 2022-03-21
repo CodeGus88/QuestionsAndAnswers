@@ -5,6 +5,9 @@ import com.questionsandanswers.questionsandanswers.auth.security.services.UserDe
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+/**
+ * Devuelve los detalles del usuario autentificado
+ */
 public class MainClassController {
 
     @Autowired

@@ -40,39 +40,6 @@ public class Validation {
         }
     }
 
-//    /**
-//     * Evalua los datos de entrada para editar y crear usuario
-//     * @param user
-//     * @param emailWithMatches
-//     * @param IS_NEW_USER
-//     */
-//    public static void validateWhriteUserData(User user, List<User> emailWithMatches, boolean IS_NEW_USER){
-//        ErrorModel error = new ErrorModel();
-//
-//        if(user.getUsername().equals("anonymousUser"))
-//            error.putError("Username ''"+ user.getUsername() +"'' is invalid!");
-//
-//        if(user.getUsername().isEmpty())
-//            error.putError("Username is required!");
-//
-//        if(user.getEmail().isEmpty())
-//            error.putError("Email is required!");
-//        else if(!Tools.isEmail(user.getEmail()))
-//            error.putError("Email is invalid!");
-//        else if(!emailWithMatches.isEmpty()){
-//            if(IS_NEW_USER)
-//                error.putError("Email already exists!");
-//            else if(emailWithMatches.get(0).getId() != user.getId())
-//                error.putError("Email already exists!");
-//        }
-//
-//        if(user.getPassword().isEmpty())
-//            error.putError("Password is required!");
-//
-//        if(!error.getErrors().isEmpty())
-//            throw new ValidationException("ERROR IN THE FORM", error, HttpStatus.BAD_REQUEST);
-//    }
-
     /**
      * Evalua los datos de entrada para editar y crear usuario
      * @param user

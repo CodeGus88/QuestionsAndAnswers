@@ -5,6 +5,9 @@ import com.questionsandanswers.questionsandanswers.models.Question;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 
+/**
+ * Objeto response, para un item de pregunta (item de lista)
+ */
 public class QuestionItemDto implements Serializable {
 
     private Long id;

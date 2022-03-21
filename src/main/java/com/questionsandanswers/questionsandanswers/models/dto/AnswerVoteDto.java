@@ -6,6 +6,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Objeto response, para voto de una respuesta
+ */
 public class AnswerVoteDto implements Serializable {
 
     private int resulOfTheVotes;

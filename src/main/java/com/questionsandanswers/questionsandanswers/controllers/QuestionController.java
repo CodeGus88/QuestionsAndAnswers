@@ -1,7 +1,6 @@
 package com.questionsandanswers.questionsandanswers.controllers;
 
 import com.questionsandanswers.questionsandanswers.exceptions.Validation;
-import com.questionsandanswers.questionsandanswers.exceptions.runtime_exception_childs.GeneralException;
 import com.questionsandanswers.questionsandanswers.models.Question;
 import com.questionsandanswers.questionsandanswers.models.dto.QuestionItemDto;
 import com.questionsandanswers.questionsandanswers.models.requests.questions.QuestionRequest;
@@ -13,13 +12,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Controlador para la entidad Question (preguntas)

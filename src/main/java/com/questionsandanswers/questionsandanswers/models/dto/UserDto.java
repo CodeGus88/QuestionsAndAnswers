@@ -4,6 +4,9 @@ import com.questionsandanswers.questionsandanswers.models.User;
 
 import java.io.Serializable;
 
+/**
+ * Objeto response, para usuario
+ */
 public class UserDto implements Serializable {
 
     private long id;

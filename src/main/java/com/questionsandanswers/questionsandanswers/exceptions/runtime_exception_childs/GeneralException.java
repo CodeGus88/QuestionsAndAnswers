@@ -2,6 +2,9 @@ package com.questionsandanswers.questionsandanswers.exceptions.runtime_exception
 
 import org.springframework.http.HttpStatus;
 
+/**
+ * Clase para el uso de excepciones generales con solo un mensaje
+ */
 public class GeneralException extends RuntimeException{
 
     private HttpStatus status;

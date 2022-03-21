@@ -8,6 +8,9 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Objeto response, para pregunta
+ */
 public class QuestionDto implements Serializable {
 
     private Long id;

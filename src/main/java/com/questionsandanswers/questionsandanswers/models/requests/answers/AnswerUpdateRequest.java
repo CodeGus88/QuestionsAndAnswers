@@ -6,6 +6,9 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+/**
+ * Formulario para editar una respuesta
+ */
 public class AnswerUpdateRequest {
 
     @NotNull
